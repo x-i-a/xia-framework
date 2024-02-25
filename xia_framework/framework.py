@@ -27,7 +27,7 @@ class Framework:
                 # Case 1: Package already configured, nothing to do
                 continue
             elif not ignore_existed and os.path.exists(f"./{package_dir}"):
-                print(f"Found local package {package_name}: ./{module_name}")
+                print(f"Found local package {package_name}: ./{package_dir}")
             elif not ignore_existed and os.path.exists(f"../{package_name}"):
                 print(f"Found local package {package_name}: ../{package_name}")
             else:
@@ -41,7 +41,7 @@ class Framework:
                 else:
                     package_address = f"{package_name}=={package_version}" if package_version else package_name
                 package_dict[package_name] = package_address
-            return package_dict
+        return package_dict
 
     def terraform_init(self, env: str):
         with open(self.landscape_yaml, 'r') as file:
