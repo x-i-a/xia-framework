@@ -18,10 +18,16 @@ class Framework:
 
         """
         with open(self.package_yaml, 'r') as file:
-            package_dict = yaml.safe_load(file) or {}
+            package_config = yaml.safe_load(file) or {}
+
+        repo_dict = package_config.get("repositories", {})
+        package_dict = package_config.get("packages", {})
 
         package_addresses = {}
         for package_name, package_config in package_dict.items():
+            package_config = package_config if package_config else {}
+            repository_name = package_config.get("repository", "default")
+            repository_cfg = repo_dict.get(repository_name, {}) or {}
             package_dir = package_name.replace("-", "_")
             if not ignore_existed and os.path.exists(f"./{package_dir}"):
                 print(f"Found local package {package_name}: ./{package_dir}")
@@ -29,12 +35,13 @@ class Framework:
                 print(f"Found local package {package_name}: ../{package_name}")
             else:
                 package_version = package_config.get("version", None)
-                git_https_url = package_config.get("git_https", None)
+                git_https_url = repository_cfg.get("git_https", None)
                 if git_https_url:
                     if package_version:
-                        package_address = f"git+https://{git_https_url}@{package_version}#egg={package_name}"
+                        package_address = (f"git+https://{git_https_url}/{package_name}"
+                                           f"@{package_version}#egg={package_name}")
                     else:
-                        package_address = f"git+https://{git_https_url}#egg={package_name}"
+                        package_address = f"git+https://{git_https_url}/{package_name}#egg={package_name}"
                 else:
                     package_address = f"{package_name}=={package_version}" if package_version else package_name
                 package_addresses[package_name] = package_address
