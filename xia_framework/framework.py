@@ -52,6 +52,20 @@ class Framework:
                 package_addresses[package_name] = package_address
         return package_addresses
 
+    def update_requirements(self):
+        needed_packages = self.get_needed_packages()
+
+        requirements_content = "\n".join(needed_packages.values())
+        with open(self.requirements_txt, 'w') as file:
+            file.write(requirements_content)
+
+    def install_requirements(self):
+        with open(self.landscape_yaml, 'r') as file:
+            landscape_dict = yaml.safe_load(file) or {}
+        pip_index_url = landscape_dict["settings"].get("pip_index_url", "https://pypi.org/simple")
+        subprocess.run(['pip', 'install', '-r', self.requirements_txt,
+                        f"--index-url={pip_index_url}"], check=True)
+
     def terraform_init(self, env: str):
         with open(self.landscape_yaml, 'r') as file:
             landscape_dict = yaml.safe_load(file) or {}

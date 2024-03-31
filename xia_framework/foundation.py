@@ -80,20 +80,6 @@ class Foundation(Framework):
         with open(self.module_yaml, 'w') as file:
             yaml.dump(module_dict, file, default_flow_style=False, sort_keys=False)
 
-    def update_requirements(self):
-        needed_packages = self.get_needed_packages()
-
-        requirements_content = "\n".join(needed_packages.values())
-        with open(self.requirements_txt, 'w') as file:
-            file.write(requirements_content)
-
-    def install_requirements(self):
-        with open(self.landscape_yaml, 'r') as file:
-            landscape_dict = yaml.safe_load(file) or {}
-        pip_index_url = landscape_dict["settings"].get("pip_index_url", "https://pypi.org/simple")
-        subprocess.run(['pip', 'install', '-r', self.requirements_txt,
-                        f"--index-url={pip_index_url}"], check=True)
-
     @classmethod
     def _fill_full_dependencies(cls, module_dict: dict):
         counter = 1  # Trigger the first iteration
