@@ -1,6 +1,7 @@
 import os
 import subprocess
 import yaml
+import re
 
 
 class Framework:
@@ -9,6 +10,10 @@ class Framework:
         self.landscape_yaml = os.path.sep.join([self.config_dir, "landscape.yaml"])
         self.module_yaml = os.path.sep.join([self.config_dir, "modules.yaml"])
         self.package_yaml = os.path.sep.join([self.config_dir, "packages.yaml"])
+
+        # Temporary files
+        self.requirements_txt = os.path.sep.join([self.config_dir, "requirements.txt"])
+        self.package_pattern = re.compile(r'^[a-zA-Z0-9_-]+$')
 
     def get_needed_packages(self, ignore_existed: bool = False) -> dict:
         """Get needed packages in requirements.txt form

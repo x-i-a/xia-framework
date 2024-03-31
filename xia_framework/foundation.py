@@ -1,4 +1,3 @@
-import re
 import os
 import shutil
 import subprocess
@@ -13,10 +12,6 @@ class Foundation(Framework):
         self.module_dir = os.path.sep.join(["iac", "modules"])
         self.env_dir = os.path.sep.join(["iac", "environments"])
         self.application_yaml = os.path.sep.join([self.config_dir, "applications.yaml"])
-
-        # Temporary files
-        self.requirements_txt = os.path.sep.join([self.config_dir, "requirements.txt"])
-        self.package_pattern = re.compile(r'^[a-zA-Z0-9_-]+$')
 
     def create_backend(self, foundation_name: str):
         with open(self.landscape_yaml, 'r') as file:
