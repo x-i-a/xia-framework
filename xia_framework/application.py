@@ -5,8 +5,8 @@ from xia_framework.framework import Framework
 
 class Application(Framework):
     def prepare(self, skip_terraform: bool = False):
-        needed_packages = self.get_needed_packages()
-        print(needed_packages)
+        self.update_requirements()
+        self.install_requirements()
 
     def create(self, module_name: str):
         """Create a module
