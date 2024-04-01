@@ -31,7 +31,7 @@ jobs:
 
     - id: publish-pypi-gcp
       name: Publish PYPI in GCP
-      uses: ./.github/actions/module-pypi/publish-pypi
+      uses: ./.github/actions/gcp-module-pypi/publish-pypi-gcp
       with:
         project_id: ${{ vars.PROJECT_ID }}
 
