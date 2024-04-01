@@ -1,0 +1,6 @@
+xia_module:
+  package: xia-module
+  class: Module
+module_pypi:
+  package: xia-module-pypi
+  class: Pypi

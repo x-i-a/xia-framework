@@ -1,0 +1,6 @@
+repositories:
+  default:
+
+packages:
+  xia-module:
+  xia-module-pypi:

@@ -1,0 +1,13 @@
+name: Workflow - prd
+
+on:
+  release:
+
+jobs:
+  publish:
+    if: false
+    environment: prd
+    runs-on: ubuntu-latest
+    steps:
+    - id: checkout-code
+      uses: actions/checkout@v4
