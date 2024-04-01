@@ -4,3 +4,6 @@ xia_module:
 module_pypi:
   package: xia-module-pypi
   class: Pypi
+gcp_module_pypi:
+  package: xia-module-pypi
+  class: PypiGcp
