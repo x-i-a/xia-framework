@@ -7,6 +7,7 @@ class Application(Framework):
     def prepare(self, skip_terraform: bool = False):
         self.update_requirements()
         self.install_requirements()
+        self.load_modules()
 
     def create(self, module_name: str):
         """Create a module

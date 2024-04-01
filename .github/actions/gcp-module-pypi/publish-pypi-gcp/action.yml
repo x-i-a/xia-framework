@@ -1,5 +1,5 @@
-name: 'GCP Authentication'
-description: 'Deploy to Google Cloud Platform'
+name: 'Publish to Google Artifact Registry'
+description: 'Deploy Pypi package to Google Artifact Registry'
 inputs:
   project_id:
     description: 'GCP Project ID'
