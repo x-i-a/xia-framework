@@ -97,9 +97,9 @@ class Framework:
             counter = 0
             for module_name, module_config in module_dict.items():
                 for dependency in module_config["_dependencies"]:
-                    for sub_dep in module_dict[dependency.replace("-", "_")]["_dependencies"]:
-                        if sub_dep.replace("-", "_") not in module_config["_dependencies"]:
-                            module_config["_dependencies"].append(sub_dep.replace("-", "_"))
+                    for sub_dep in module_dict[dependency]["_dependencies"]:
+                        if sub_dep not in module_config["_dependencies"]:
+                            module_config["_dependencies"].append(sub_dep)
                             counter += 1
 
     @classmethod
