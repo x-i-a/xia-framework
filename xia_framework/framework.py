@@ -19,6 +19,31 @@ class Framework:
         self.requirements_txt = os.path.sep.join([self.config_dir, "requirements.txt"])
         self.package_pattern = re.compile(r'^[a-zA-Z0-9_-]+$')
 
+    @classmethod
+    def get_package_address(cls, package_name: str, package_config: dict = None, repo_dict: dict = None,
+                            ignore_existed: bool = False):
+        repo_dict = repo_dict if repo_dict else {}
+        package_config = package_config if package_config else {}
+        repository_name = package_config.get("repository", "default")
+        repository_cfg = repo_dict.get(repository_name, {}) or {}
+        package_dir = package_name.replace("-", "_")
+        if not ignore_existed and os.path.exists(f"./{package_dir}"):
+            print(f"Found local package {package_name}: ./{package_dir}")
+        elif not ignore_existed and os.path.exists(f"../{package_name}"):
+            print(f"Found local package {package_name}: ../{package_name}")
+        else:
+            package_version = package_config.get("version", None)
+            git_https_url = repository_cfg.get("git_https", None)
+            if git_https_url:
+                if package_version:
+                    package_address = (f"git+https://{git_https_url}/{package_name}"
+                                       f"@{package_version}#egg={package_name}")
+                else:
+                    package_address = f"git+https://{git_https_url}/{package_name}#egg={package_name}"
+            else:
+                package_address = f"{package_name}=={package_version}" if package_version else package_name
+            return package_address
+
     def get_needed_packages(self, ignore_existed: bool = False) -> dict:
         """Get needed packages in requirements.txt form
 
@@ -34,25 +59,8 @@ class Framework:
 
         package_addresses = {}
         for package_name, package_config in package_dict.items():
-            package_config = package_config if package_config else {}
-            repository_name = package_config.get("repository", "default")
-            repository_cfg = repo_dict.get(repository_name, {}) or {}
-            package_dir = package_name.replace("-", "_")
-            if not ignore_existed and os.path.exists(f"./{package_dir}"):
-                print(f"Found local package {package_name}: ./{package_dir}")
-            elif not ignore_existed and os.path.exists(f"../{package_name}"):
-                print(f"Found local package {package_name}: ../{package_name}")
-            else:
-                package_version = package_config.get("version", None)
-                git_https_url = repository_cfg.get("git_https", None)
-                if git_https_url:
-                    if package_version:
-                        package_address = (f"git+https://{git_https_url}/{package_name}"
-                                           f"@{package_version}#egg={package_name}")
-                    else:
-                        package_address = f"git+https://{git_https_url}/{package_name}#egg={package_name}"
-                else:
-                    package_address = f"{package_name}=={package_version}" if package_version else package_name
+            package_address = self.get_package_address(package_name, package_config, repo_dict)
+            if package_address:
                 package_addresses[package_name] = package_address
         return package_addresses
 

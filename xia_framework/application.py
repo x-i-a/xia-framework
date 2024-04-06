@@ -31,7 +31,7 @@ class Application(Framework):
         """Initialize a module
 
         Args:
-            module_name (str):
+            module_name (str): Module name as format <package_name>@<version>/<module_name>
         """
         with open(self.module_yaml, 'r') as file:
             module_dict = yaml.safe_load(file) or {}
@@ -64,7 +64,7 @@ def main():
     application = Application()
     if args.command == 'init-module':
         application.install_requirements()
-        application.create(args.module_name)
+        application.create(module_name=args.module_name)
     elif args.command == "prepare":
         application.prepare(env_name=args.env_name)
     else:
