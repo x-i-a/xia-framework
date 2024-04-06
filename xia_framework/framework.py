@@ -102,6 +102,10 @@ class Framework:
                             module_config["_dependencies"].append(sub_dep.replace("-", "_"))
                             counter += 1
 
+    @classmethod
+    def _get_dependencies(cls, module_class):
+        return module_class.activate_depends
+
     def load_modules(self):
         """Loading all modules
 
@@ -113,9 +117,10 @@ class Framework:
         # Step 1: Get All Module Class
         for module_name, module_config in module_dict.items():
             module_obj = importlib.import_module(module_config["package"].replace("-", "_"))
-            module_class = getattr(module_obj, module_config["class"])
+            module_class_name = getattr(module_obj, "modules", {}).get(module_name, module_config["class"])
+            module_class = getattr(module_obj, module_class_name)
             module_config["_class"] = module_class
-            module_config["_dependencies"] = module_class.activate_depends
+            module_config["_dependencies"] = self._get_dependencies(module_class=module_class)
         # Step 2: Fill Dependencies
         self._fill_full_dependencies(module_dict)
         with open(self.landscape_yaml, 'r') as file:
