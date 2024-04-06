@@ -22,7 +22,6 @@ class Application(Framework):
         return module_class.deploy_depends
 
     def prepare(self, env_name: str = "", skip_terraform: bool = False):
-        self.update_requirements()
         self.install_requirements()
         self.load_modules()
         if env_name:
@@ -64,7 +63,7 @@ def main():
     # Handle different commands
     application = Application()
     if args.command == 'init-module':
-        application.prepare()
+        application.install_requirements()
         application.create(args.module_name)
     elif args.command == "prepare":
         application.prepare(env_name=args.env_name)

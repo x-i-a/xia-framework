@@ -61,14 +61,20 @@ class Framework:
 
         requirements_content = "\n".join(needed_packages.values())
         with open(self.requirements_txt, 'w') as file:
+            print(f"Requirement File Generated Dynamically: \n{requirements_content}")
             file.write(requirements_content)
 
     def install_requirements(self):
+        requirements_existed = os.path.exists(self.requirements_txt)
+        if not requirements_existed:
+            self.update_requirements()
         with open(self.landscape_yaml, 'r') as file:
             landscape_dict = yaml.safe_load(file) or {}
         pip_index_url = landscape_dict.get("settings", {}).get("pip_index_url", "https://pypi.org/simple")
         subprocess.run(['pip', 'install', '-r', self.requirements_txt,
                         f"--index-url={pip_index_url}"], check=True)
+        if not requirements_existed:
+            os.remove(self.requirements_txt)
 
     def terraform_init(self, env: str):
         with open(self.landscape_yaml, 'r') as file:
