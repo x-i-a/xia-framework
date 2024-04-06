@@ -1,4 +1,5 @@
 import argparse
+import subprocess
 import importlib
 import yaml
 from xia_framework.framework import Framework
@@ -27,20 +28,23 @@ class Application(Framework):
         if env_name:
             self.enable_environments(env_name)
 
-    def create(self, module_name: str):
+    def create(self, module_uri: str):
         """Initialize a module
 
         Args:
-            module_name (str): Module name as format <package_name>@<version>/<module_name>
+            module_uri (str): Module name as format <package_name>@<version>/<module_name>
         """
-        package_name, module_name = module_name.split("/", 1)
-        if "@" in package_name:
-            package_name, version = package_name.split("@", 1)
-        else:
-            version = None
-        with open(self.module_yaml, 'r') as file:
-            module_dict = yaml.safe_load(file) or {}
-        if module_name not in module_dict:
+        package_name, version, module_name = self._parse_module_uri(module_uri=module_uri)
+        package_address = self.get_package_address(package_name=package_name, package_version=version)
+        with open(self.module_yaml, 'r') as module_file:
+            module_dict = yaml.safe_load(module_file) or {}
+        new_module = True if module_name not in module_dict else False
+        if new_module:
+            if package_address:
+                # Installation of package
+                subprocess.run(['pip', 'install', package_address], check=True)
+            module_dict[module_name] = {"package": package_name, "class": "", "events": {"deploy": {}}}
+
             raise ValueError(f"Module {module_name} is not configured")
         module_config = module_dict[module_name]
         module_obj = importlib.import_module(module_config["package"].replace("-", "_"))
@@ -48,6 +52,19 @@ class Application(Framework):
         module_instance = module_class()
         init_config = module_config.get("events", {}).get("init", {}) or {}
         module_instance.initialize(**init_config)
+        if new_module:
+            # All goes well, should be safe to save the modified module configuration
+            with open(self.package_yaml, 'r') as package_file:
+                package_dict = yaml.safe_load(package_file) or {}
+            if package_name not in package_dict:
+                if version:
+                    package_dict[package_name] = {"version": version}
+                else:
+                    package_dict[package_name] = {}
+                with open(self.package_yaml, 'w') as package_file:
+                    yaml.safe_dump(package_dict, package_file)
+            with open(self.module_yaml, 'w') as module_file:
+                yaml.safe_dump(module_dict, module_file)
 
 
 def main():
@@ -69,7 +86,7 @@ def main():
     application = Application()
     if args.command == 'init-module':
         application.install_requirements()
-        application.create(module_name=args.module_name)
+        application.create(module_uri=args.module_name)
     elif args.command == "prepare":
         application.prepare(env_name=args.env_name)
     else:

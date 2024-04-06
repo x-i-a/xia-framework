@@ -20,6 +20,19 @@ class Framework:
         self.package_pattern = re.compile(r'^[a-zA-Z0-9_-]+$')
 
     @classmethod
+    def _parse_module_uri(cls, module_uri: str):
+        pattern_1 = r'^[a-zA-Z0-9_-]+@[a-zA-Z0-9\.]+/[a-zA-Z0-9_-]+$'
+        pattern_2 = r'^[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+$'
+        if not re.match(pattern_1, module_uri) and not re.match(pattern_2, module_uri):
+            raise ValueError("Module name must be as format <package_name>@<version>/<module_name>")
+        package_name, module_name = module_uri.split("/", 1)
+        if "@" in package_name:
+            package_name, version = package_name.split("@", 1)
+        else:
+            version = None
+        return package_name, version, module_name
+
+    @classmethod
     def get_package_address(cls, package_name: str, package_version: str = None, git_https_url: str = None,
                             ignore_existed: bool = False):
         package_dir = package_name.replace("-", "_")
