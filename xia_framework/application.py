@@ -33,6 +33,11 @@ class Application(Framework):
         Args:
             module_name (str): Module name as format <package_name>@<version>/<module_name>
         """
+        package_name, module_name = module_name.split("/", 1)
+        if "@" in package_name:
+            package_name, version = package_name.split("@", 1)
+        else:
+            version = None
         with open(self.module_yaml, 'r') as file:
             module_dict = yaml.safe_load(file) or {}
         if module_name not in module_dict:

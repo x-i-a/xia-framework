@@ -20,20 +20,14 @@ class Framework:
         self.package_pattern = re.compile(r'^[a-zA-Z0-9_-]+$')
 
     @classmethod
-    def get_package_address(cls, package_name: str, package_config: dict = None, repo_dict: dict = None,
+    def get_package_address(cls, package_name: str, package_version: str = None, git_https_url: str = None,
                             ignore_existed: bool = False):
-        repo_dict = repo_dict if repo_dict else {}
-        package_config = package_config if package_config else {}
-        repository_name = package_config.get("repository", "default")
-        repository_cfg = repo_dict.get(repository_name, {}) or {}
         package_dir = package_name.replace("-", "_")
         if not ignore_existed and os.path.exists(f"./{package_dir}"):
             print(f"Found local package {package_name}: ./{package_dir}")
         elif not ignore_existed and os.path.exists(f"../{package_name}"):
             print(f"Found local package {package_name}: ../{package_name}")
         else:
-            package_version = package_config.get("version", None)
-            git_https_url = repository_cfg.get("git_https", None)
             if git_https_url:
                 if package_version:
                     package_address = (f"git+https://{git_https_url}/{package_name}"
@@ -59,7 +53,12 @@ class Framework:
 
         package_addresses = {}
         for package_name, package_config in package_dict.items():
-            package_address = self.get_package_address(package_name, package_config, repo_dict)
+            package_config = package_config if package_config else {}
+            repository_name = package_config.get("repository", "default")
+            repository_cfg = repo_dict.get(repository_name, {}) or {}
+            package_version = package_config.get("version", None)
+            git_https_url = repository_cfg.get("git_https", None)
+            package_address = self.get_package_address(package_name, package_version, git_https_url)
             if package_address:
                 package_addresses[package_name] = package_address
         return package_addresses
