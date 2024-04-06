@@ -130,7 +130,6 @@ class Framework:
         for module_name, module_binding in list(module_bindings.items()):
             app_names = module_binding.get("applications", [])
             for dependency in module_dict[module_name]["_dependencies"]:
-                dependency = dependency.replace("-", "_")
                 if dependency not in module_bindings:
                     module_bindings[dependency] = {"applications": app_names.copy()}
                 elif "applications" not in module_bindings[dependency]:
