@@ -20,13 +20,15 @@ class Application(Framework):
     def _get_dependencies(cls, module_class):
         return module_class.deploy_depends
 
-    def prepare(self, skip_terraform: bool = False):
+    def prepare(self, env_name: str = "", skip_terraform: bool = False):
         self.update_requirements()
         self.install_requirements()
         self.load_modules()
+        if env_name:
+            self.enable_environments(env_name)
 
     def create(self, module_name: str):
-        """Create a module
+        """Initialize a module
 
         Args:
             module_name (str):
