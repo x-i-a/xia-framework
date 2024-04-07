@@ -1,6 +1,7 @@
 import os
 import subprocess
 import yaml
+from ruamel.yaml import YAML
 import re
 import shutil
 import importlib
@@ -8,6 +9,8 @@ import importlib
 
 class Framework:
     def __init__(self, config_dir: str = "config", **kwargs):
+        self.yaml = YAML()
+        yaml.preserve_quotes = True
         self.config_dir = config_dir
         self.module_dir = os.path.sep.join(["iac", "modules"])
         self.env_dir = os.path.sep.join(["iac", "environments"])
