@@ -21,10 +21,10 @@ class Application(Framework):
     def _get_dependencies(cls, module_class):
         return module_class.deploy_depends
 
-    def prepare(self, env_name: str = "", skip_terraform: bool = False):
+    def prepare(self, env_name: str = "base", skip_terraform: bool = False):
         self.install_requirements()
         self.load_modules()
-        if env_name:
+        if env_name != "base":
             self.enable_environments(env_name)
 
     def create(self, module_uri: str):
@@ -75,7 +75,10 @@ def main():
     parser_create = subparsers.add_parser('init-module', help='Initialization of a new module')
     parser_create.add_argument('-n', '--module_name', type=str, help='Create files relates to module')
 
-    parser_prepare = subparsers.add_parser('prepare', help='Prepare Modules for deploy')
+    parser_prepare = subparsers.add_parser('prepare', help='Prepare Modules for a given environment')
+    parser_prepare.add_argument('-e', '--env_name', type=str, help='Environment Name')
+
+    parser_prepare = subparsers.add_parser('build', help='Prepare Modules for a given environment')
     parser_prepare.add_argument('-e', '--env_name', type=str, help='Environment Name')
 
     # Parse the arguments
@@ -87,6 +90,8 @@ def main():
         application.install_requirements()
         application.create(module_uri=args.module_name)
     elif args.command == "prepare":
+        application.prepare(env_name=args.env_name)
+    elif args.command == "build":
         application.prepare(env_name=args.env_name)
     else:
         # If no command is provided, show help
