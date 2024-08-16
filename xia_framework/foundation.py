@@ -52,6 +52,14 @@ class Foundation(Framework):
         # self.install_requirements()
         # self.enable_modules()
 
+    def terraform_get_state_file_prefix(self):
+        with open(self.landscape_yaml, 'r') as file:
+            landscape_dict = yaml.safe_load(file) or {}
+        current_settings = landscape_dict.get("settings", {})
+        realm_name = current_settings["realm_name"]
+        foundation_name = current_settings["foundation_name"]
+        return f"{realm_name}/_/{foundation_name}/_/terraform/state"
+
     def prepare(self, skip_terraform: bool = False):
         self.update_requirements()
         self.install_requirements()

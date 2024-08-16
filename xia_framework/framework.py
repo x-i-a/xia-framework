@@ -99,15 +99,18 @@ class Framework:
         if not requirements_existed:
             os.remove(self.requirements_txt)
 
+    def terraform_get_state_file_prefix(self):
+        raise NotImplementedError
+
     def terraform_init(self, env: str):
         with open(self.landscape_yaml, 'r') as file:
             landscape_dict = yaml.safe_load(file) or {}
         current_settings = landscape_dict.get("settings", {})
-        bucket_name = current_settings["cosmos_name"]
+        bucket_name = current_settings.get("bucket_name", current_settings["cosmos_name"])
         # bucket_name = current_settings["realm_name"] + "_" + current_settings["foundation_name"]
         tf_init_cmd = (f'terraform -chdir=iac/environments/{env} init '
                        f'-backend-config="bucket={bucket_name}" '
-                       f'-backend-config="prefix=terraform/state"')
+                       f'-backend-config="prefix={self.terraform_get_state_file_prefix()}"')
         print(tf_init_cmd)
         subprocess.run(tf_init_cmd, shell=True)
 
