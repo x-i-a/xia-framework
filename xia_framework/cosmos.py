@@ -43,3 +43,15 @@ class Cosmos(Framework):
                     yaml.dump(landscape_dict, file, default_flow_style=False, sort_keys=False)
             else:
                 print(r.stderr)
+
+    def terraform_get_state_file_prefix(self):
+        return f"_/terraform/state"
+
+    def prepare(self, skip_terraform: bool = False):
+        self.update_requirements()
+        self.install_requirements()
+        self.load_modules()
+        self.enable_environments("prd")
+        if not skip_terraform:
+            self.terraform_init("prd")
+            self.terraform_apply("prd")
