@@ -12,8 +12,8 @@
 graph TD
     Cosmos -->|Contains| Realm_A
     Realm_A -->|Holds| Realm_B
-    Realm_A -->|Holds| Foundation_A
-    Realm_B -->|Holds| Foundation_B
+    Realm_A -->|Manages| Foundation_A
+    Realm_B -->|Manages| Foundation_B
     Foundation_A -->|Manages| Application_A1
     Foundation_A -->|Manages| Application_A2
     Foundation_B -->|Manages| Application_B1
@@ -28,17 +28,81 @@ Remark: Foundation, realm or cosmos are nothing but a special application
 3. Before module is usable in each application, they must be enabled in foundation
 ```mermaid
 graph TD
-    F(Foundation) -->|Installs| A1(Application 1)
-    F -->|Installs| A2(Application 2)
-    F -->|Enables| M1(Module 1)
-    F -->|Enables| M2(Module 2)
-    F -->|Enables| M3(Module 3)
+    F(Foundation) -->|Manages| A1(Application 1)
+    F -->|Manages| A2(Application 2)
+    F -->|Activates| M1(Module 1)
+    F -->|Activates| M2(Module 2)
+    F -->|Activates| M3(Module 3)
 
     A1 -->|Has Instance of| M1
     A1 -->|Has Instance of| M2
     A2 -->|Has Instance of| M2
     A2 -->|Has Instance of| M3
 ```
+
+## Cosmos - Realm - Foundation - Module Design
+The same relationship is also defined between Cosmos/Realm and Application
+1. All foundation is installed on a realm or cosmos
+2. Each foundation could have instance of modules
+3. Before module is usable in each foundation, they must be enabled in their manager realm
+```mermaid
+graph TD
+    Cosmos -->|Contains| Realm_A(Realm A)
+    Realm_A -->|Holds| Realm_B(Realm B)
+    Realm_A -->|Manages| Foundation_A(Foundation A)
+    Realm_B -->|Manages| Foundation_B(Foundation B)
+    Foundation_A -->|Activates| M1(Module 1)
+    Foundation_A -->|Activates| M2(Module 2)
+    Foundation_B -->|Activates| M1
+```
+
+## Git Integration
+Generally, there types of git repository are used:
+* Cosmos Git Repository
+  * Defining Cosmos - Realm - Foundation structure
+  * Activating modules to be used at Foundation level
+  * Initializing modules to be used
+* Foundation Git Repository
+  * Defining Foundation - Application structure
+  * Activating modules to be used at Application level
+  * Initializing modules to be used
+* Application Git Repository
+  * Initializing modules to be used
+
+
+## CLI/UI/Devops Design
+Basic activities contains three action parts:
+* Activate module 
+* Initialize module
+* CI/CD 
+
+Basic ways to activate changes
+* `make` commands
+  * `make activate-module` to activate module
+  * `make init-module` to initialize module
+* CI/CD triggered by Git repository
+
+
+## Configuration files:
+### Common configuration files
+* `modules.yaml`: 
+  * Module class location
+  * Activation scope and parameters
+  * Deployment scope and parameters
+  * Dependencies
+* `packages.yaml`: Where the module of which package should be installed
+* `landscape.yaml`: relationships among cosmos, realm, foundation and application
+  * Cosmos repository
+    * tree structure from cosmos to foundation
+  * Foundation repository
+    * related cosmos, realm information
+    * environments and related ci/cd trigger
+  * Application repository
+    * environments and related ci/cd stage configurations
+### Module related configuration files
+Module related configuration files should be placed with subdirectories
+
+
 
 ## Example
 ### Use case 1: Google Cloud Platform with GitHub
