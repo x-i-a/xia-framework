@@ -134,10 +134,6 @@ class Framework:
                             module_config["_dependencies"].append(sub_dep)
                             counter += 1
 
-    @classmethod
-    def _get_dependencies(cls, module_class):
-        return module_class.activate_depends
-
     def load_modules(self):
         """Loading all modules
 
@@ -152,7 +148,7 @@ class Framework:
             module_class_name = getattr(module_obj, "modules", {}).get(module_name, module_config["class"])
             module_class = getattr(module_obj, module_class_name)
             module_config["_class"] = module_class
-            module_config["_dependencies"] = module_config["depends_on"].copy()
+            module_config["_dependencies"] = module_config.get("depends_on", []).copy()
         # Step 2: Fill Dependencies
         self._fill_full_dependencies(module_dict)
         with open(self.landscape_yaml, 'r') as file:
