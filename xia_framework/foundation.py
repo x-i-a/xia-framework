@@ -65,6 +65,7 @@ class Foundation(Framework):
         self.update_requirements()
         self.install_requirements()
         self.load_modules()
+        self.enable_environments("prd")
         """
         self.enable_environments("prd")
         if not skip_terraform:
