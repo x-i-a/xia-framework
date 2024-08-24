@@ -1,6 +1,7 @@
 import os
 import shutil
 import subprocess
+import argparse
 import yaml
 from xia_framework.framework import Framework
 
@@ -93,3 +94,38 @@ class Foundation(Framework):
     def create_app(self, app_name: str):
         print(f"Creating application: {app_name}")
 
+
+def main():
+    # Top level parser
+    parser = argparse.ArgumentParser(description='Application tools')
+    subparsers = parser.add_subparsers(dest='command', help='Available commands')
+
+    # Create the parser for the "prepare" command
+    parser_create = subparsers.add_parser('init-module', help='Initialization of a new module')
+    parser_create.add_argument('-n', '--module_name', type=str, help='Create files relates to module')
+
+    parser_prepare = subparsers.add_parser('prepare', help='Prepare Modules for a given environment')
+    parser_prepare.add_argument('-e', '--env_name', type=str, help='Environment Name')
+    parser_prepare.add_argument('-s', '--skip_terraform', type=str, help='Skip Terraform apply')
+
+    parser_prepare = subparsers.add_parser('build', help='Prepare Modules for a given environment')
+    parser_prepare.add_argument('-e', '--env_name', type=str, help='Environment Name')
+
+    # Parse the arguments
+    args = parser.parse_args()
+
+    # Handle different commands
+    foundation = Foundation()
+    if args.command == 'init-module':
+        foundation.install_requirements()
+    elif args.command == "prepare":
+        foundation.prepare(skip_terraform=args.env_name)
+    elif args.command == "build":
+        foundation.prepare(skip_terraform=args.env_name)
+    else:
+        # If no command is provided, show help
+        parser.print_help()
+
+
+if __name__ == "__main__":
+    main()
