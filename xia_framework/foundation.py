@@ -61,14 +61,16 @@ class Foundation(Framework):
         foundation_name = current_settings["foundation_name"]
         return f"{realm_name}/_/{foundation_name}/_/terraform/state"
 
-    def prepare(self, skip_terraform: bool = False):
+    def prepare(self):
         self.update_requirements()
         self.install_requirements()
         self.load_modules()
+        """
         self.enable_environments("prd")
         if not skip_terraform:
             self.terraform_init("prd")
             self.terraform_apply("prd")
+        """
 
     def register_module(self, module_name: str, package: str, module_class: str):
         if not self.package_pattern.match(package):
@@ -106,7 +108,6 @@ def main():
 
     parser_prepare = subparsers.add_parser('prepare', help='Prepare Modules for a given environment')
     parser_prepare.add_argument('-e', '--env_name', type=str, help='Environment Name')
-    parser_prepare.add_argument('-s', '--skip_terraform', type=str, help='Skip Terraform apply')
 
     parser_prepare = subparsers.add_parser('build', help='Prepare Modules for a given environment')
     parser_prepare.add_argument('-e', '--env_name', type=str, help='Environment Name')
@@ -119,9 +120,9 @@ def main():
     if args.command == 'init-module':
         foundation.install_requirements()
     elif args.command == "prepare":
-        foundation.prepare(skip_terraform=args.env_name)
+        foundation.prepare()
     elif args.command == "build":
-        foundation.prepare(skip_terraform=args.env_name)
+        foundation.prepare()
     else:
         # If no command is provided, show help
         parser.print_help()
