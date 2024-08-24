@@ -122,18 +122,6 @@ class Framework:
         tf_plan_cmd = f'terraform -chdir=iac/environments/{env} plan'
         subprocess.run(tf_plan_cmd, shell=True)
 
-    @classmethod
-    def _fill_full_dependencies(cls, module_dict: dict):
-        counter = 1  # Trigger the first iteration
-        while counter > 0:
-            counter = 0
-            for module_name, module_config in module_dict.items():
-                for dependency in module_config["_dependencies"]:
-                    for sub_dep in module_dict[dependency]["_dependencies"]:
-                        if sub_dep not in module_config["_dependencies"]:
-                            module_config["_dependencies"].append(sub_dep)
-                            counter += 1
-
     def load_modules(self):
         """Loading all modules
 
@@ -149,26 +137,8 @@ class Framework:
             module_class = getattr(module_obj, module_class_name)
             module_config["_class"] = module_class
             module_config["_dependencies"] = module_config.get("depends_on", []).copy()
-        # Step 2: Fill Dependencies
-        self._fill_full_dependencies(module_dict)
-        with open(self.landscape_yaml, 'r') as file:
-            landscape_dict = yaml.safe_load(file) or {}
 
-        module_bindings = landscape_dict.get("modules", {})
-        for module_name, module_binding in list(module_bindings.items()):
-            app_names = module_binding.get("applications", [])
-            for dependency in module_dict[module_name]["_dependencies"]:
-                if dependency not in module_bindings:
-                    module_bindings[dependency] = {"applications": app_names.copy()}
-                elif "applications" not in module_bindings[dependency]:
-                    module_bindings[dependency]["applications"] = app_names.copy()
-                else:
-                    new_apps = [n for n in app_names if n not in module_bindings[dependency].get("applications", [])]
-                    module_bindings[dependency]["applications"].extend(new_apps)
-        with open(self.landscape_yaml, 'w') as file:
-            yaml.dump(landscape_dict, file, default_flow_style=False, sort_keys=False)
-
-        # Step 3: Apply Events
+        # Step 2: Apply Events
         for module_name, module_config in module_dict.items():
             module_instance = module_config["_class"]()
             for event, event_cfg in module_config.get("events", {}).items():

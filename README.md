@@ -82,7 +82,6 @@ Basic ways to activate changes
   * `make init-module` to initialize module
 * CI/CD triggered by Git repository
 
-
 ## Configuration files:
 ### Common configuration files
 * `modules.yaml`: 
@@ -100,17 +99,32 @@ Basic ways to activate changes
   * Application repository
     * environments and related ci/cd stage configurations
 ### Module related configuration files
-Module related configuration files should be placed with subdirectories
-
-
+Module related configuration files should be placed with subdirectories. For example:
+* /core: Git, Terraform related
+* /platform: GCP, AWS, Azure organization level objects
 
 ## Example
 ### Use case 1: Google Cloud Platform with GitHub
+GCP + GitHub with GCS as terraform state file storage is a common case
 * Cosmos
-  * Organization of GCP and GitHub
-* Realm
-  * Directory of GCP and nothing relates at GitHub side
+  * init modules: The module represents structure of cosmos
+    * gcp-module-organization: realm/foundation will be installed as folders
+    * gh-module-foundation: creation of a GitHub repository for each foundation
+    * gcs-terraform: possible to deploy cosmos landscape
+    * module-foundation-state-gcs: place to save foundation tf files
+  * activate modules: Enable foundation capacities
+    * module-application-state-gcs: possible to create tf file for application attached to foundation (bucket rights to sa)
+    * gcp-module-project: possible to create gcp project under a folder (folder owner rights to sa)
+    * gh-module-application: possible to create a GitHub repository under a team (token in the secret of foundation repository)
 * Foundation
+  * init module: The module represents structure of foundation
+    * gcp-module-project: application will be installed in projects
+    * gh-module-application: creation of a GitHub repository for each application
+    * module-application-state-gcs: place to save application tf files
+  * active module:
+    * 
+* 
+* 
   * Need to define three environments to form dev -> test -> production chain
   * Directory of GCP and with the following module enabled
     * gcp-module-project: GCP Project Handling
