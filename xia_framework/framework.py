@@ -8,6 +8,8 @@ import importlib
 
 
 class Framework:
+    COSMOS_ENV = 'prd'  # Cosmos default environment name
+
     def __init__(self, config_dir: str = "config", **kwargs):
         self.yaml = YAML()
         yaml.preserve_quotes = True
@@ -34,6 +36,20 @@ class Framework:
         else:
             version = None
         return package_name, version, module_name
+
+    def init_module(self, module_uri: str):
+        """initialize a module
+
+        Args:
+            module_uri (str): Module name as format <package_name>@<version>/<module_name>
+        """
+
+    def activate_module(self, module_uri: str):
+        """activate a module
+
+        Args:
+            module_uri (str): Module name as format <package_name>@<version>/<module_name>
+        """
 
     @classmethod
     def get_package_address(cls, package_name: str, package_version: str = None, git_https_url: str = None,
@@ -114,13 +130,19 @@ class Framework:
         print(tf_init_cmd)
         subprocess.run(tf_init_cmd, shell=True)
 
-    def terraform_apply(self, env: str):
-        tf_apply_cmd = f'terraform -chdir=iac/environments/{env} apply'
+    def terraform_apply(self, env: str, auto_approve: bool = False):
+        auto_approve_cmd = "--auto-approve " if auto_approve else ""
+        tf_apply_cmd = f'terraform {auto_approve_cmd} -chdir=iac/environments/{env} apply'
         subprocess.run(tf_apply_cmd, shell=True)
 
     def terraform_plan(self, env: str):
         tf_plan_cmd = f'terraform -chdir=iac/environments/{env} plan'
         subprocess.run(tf_plan_cmd, shell=True)
+
+    def terraform_destroy(self, env: str, auto_approve: bool = False):
+        auto_approve_cmd = "--auto-approve " if auto_approve else ""
+        tf_destroy_cmd = f'terraform {auto_approve_cmd} -chdir=iac/environments/{env} destroy'
+        subprocess.run(tf_destroy_cmd, shell=True)
 
     def load_modules(self):
         """Loading all modules

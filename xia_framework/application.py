@@ -42,7 +42,7 @@ class Application(Framework):
             if package_address:
                 # Installation of package
                 subprocess.run(['pip', 'install', package_address], check=True)
-        module_dict[module_name] = {"package": package_name,"class": None, "events": {"deploy": None}}
+        module_dict[module_name] = {"package": package_name, "class": None, "events": {"deploy": None}}
         module_config = module_dict[module_name]
         module_obj = importlib.import_module(module_config["package"].replace("-", "_"))
         module_class_name = getattr(module_obj, "modules", {}).get(module_name)

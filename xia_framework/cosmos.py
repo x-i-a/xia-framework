@@ -1,4 +1,5 @@
 import os
+import argparse
 import subprocess
 import yaml
 from xia_framework.framework import Framework
@@ -47,11 +48,66 @@ class Cosmos(Framework):
     def terraform_get_state_file_prefix(self):
         return f"_/terraform/state"
 
-    def prepare(self, skip_terraform: bool = False):
+    def prepare(self, env: str = None, skip_terraform: bool = False):
+        env = env if env else self.COSMOS_ENV
         self.update_requirements()
         self.install_requirements()
         self.load_modules()
-        self.enable_environments("prd")
+        self.enable_environments(env)
         if not skip_terraform:
-            self.terraform_init("prd")
-            self.terraform_apply("prd")
+            self.terraform_init(env)
+            self.terraform_apply(env)
+
+
+def main():
+    # Top level commands
+    parser = argparse.ArgumentParser(description='Cosmos tools')
+    subparsers = parser.add_subparsers(dest='command', help='Available commands')
+
+    parser = subparsers.add_parser('bigbang', help='Create Cosmos Singularity')
+    parser.add_argument('-t', '--topology',
+                        type=str, help='Cosmos topology', default="github:x-i-a/xia-cosmos-template")
+    parser.add_argument('-n', '--name', type=str, help='Cosmos Name')
+
+    parser = subparsers.add_parser('init-module', help='Initialization of a new module')
+    parser.add_argument('-n', '--module-uri', type=str,
+                        help='Module uri to be added in format: <package_name>@<version>/<module_name>')
+
+    parser = subparsers.add_parser('activate-module', help='Activation of a new module to be used in foundation')
+    parser.add_argument('-n', '--module-uri', type=str,
+                        help='Module name to be activated in format: <package_name>@<version>/<module_name>')
+
+    subparsers.add_parser('plan', help='Prepare Cosmos Deploy time objects')
+
+    parser = subparsers.add_parser('apply', help='Prepare Cosmos Deploy time objects')
+    parser.add_argument('-y', '--auto-approve', type=str, help='Approve apply automatically')
+
+    parser = subparsers.add_parser('destroy', help='Prepare Cosmos Deploy time objects')
+    parser.add_argument('-y', '--auto-approve', type=str, help='Approve destroy automatically')
+
+    # Parse the arguments
+    args = parser.parse_args()
+
+    # Handle different commands for the given Cosmos
+    cosmos = Cosmos()
+    if args.command == 'bigbang':
+        cosmos.bigbang(cosmos_name=args.name)
+        # cosmos.create(module_uri=args.module_name)
+    elif args.command == "init-module":
+        cosmos.init_module(module_uri=args.module_uri)
+    elif args.command == "activate-module":
+        cosmos.activate_module(module_uri=args.module_uri)
+    elif args.command == "plan":
+        cosmos.prepare(skip_terraform=True)
+    elif args.command == "apply":
+        cosmos.prepare(skip_terraform=True)
+        cosmos.terraform_apply(env=cosmos.COSMOS_ENV, auto_approve=args.auto_approve)
+    elif args.command == "destroy":
+        cosmos.terraform_destroy(env=cosmos.COSMOS_ENV, auto_approve=args.auto_approve)
+    else:
+        # If no command is provided, show help
+        parser.print_help()
+
+
+if __name__ == "__main__":
+    main()

@@ -100,7 +100,7 @@ class Foundation(Framework):
 
 def main():
     # Top level parser
-    parser = argparse.ArgumentParser(description='Application tools')
+    parser = argparse.ArgumentParser(description='Foundation tools')
     subparsers = parser.add_subparsers(dest='command', help='Available commands')
 
     # Create the parser for the "prepare" command

@@ -78,8 +78,10 @@ Basic activities contains three action parts:
 
 Basic ways to activate changes
 * `make` commands
-  * `make activate-module` to activate module
-  * `make init-module` to initialize module
+  * `make activate-module`: activate module
+  * `make init-module`: initialize module
+  * `make plan`: terraform plan
+  * `make apply`: terraform apply
 * CI/CD triggered by Git repository
 
 ## Configuration files:
