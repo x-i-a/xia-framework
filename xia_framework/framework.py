@@ -124,7 +124,7 @@ class Framework:
         # bucket_name = current_settings["realm_name"] + "_" + current_settings["foundation_name"]
         tf_init_cmd = (f'terraform -chdir=iac/environments/{env} init '
                        f'-backend-config="bucket={bucket_name}" '
-                       f'-backend-config="prefix={self.terraform_get_state_file_prefix()}"')
+                       f'-backend-config="prefix={self.terraform_get_state_file_prefix(env)}"')
         print(tf_init_cmd)
         subprocess.run(tf_init_cmd, shell=True)
 
