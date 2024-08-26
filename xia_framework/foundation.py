@@ -64,6 +64,7 @@ class Foundation(Framework):
         return f"{realm_name}/_/{foundation_name}/_/terraform/state"
 
     def prepare(self, env: str = None, skip_terraform: bool = False):
+        env = env if env else self.FOUNDATION_ENV
         self.update_requirements()
         self.install_requirements()
         self.load_modules()
