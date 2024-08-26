@@ -6,6 +6,8 @@ from xia_framework.framework import Framework
 
 
 class Cosmos(Framework):
+    COSMOS_ENV = 'prd'  # Cosmos default environment name
+
     def bigbang(self, cosmos_name: str):
         """Create the cosmos administration project
 

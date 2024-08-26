@@ -8,8 +8,6 @@ import importlib
 
 
 class Framework:
-    COSMOS_ENV = 'prd'  # Cosmos default environment name
-
     def __init__(self, config_dir: str = "config", **kwargs):
         self.yaml = YAML()
         yaml.preserve_quotes = True

@@ -7,6 +7,8 @@ from xia_framework.framework import Framework
 
 
 class Foundation(Framework):
+    FOUNDATION_ENV = 'prd'  # Foundation default environment name
+
     def __init__(self, config_dir: str = "config", **kwargs):
         super().__init__(config_dir=config_dir, **kwargs)
         self.application_yaml = os.path.sep.join([self.config_dir, "applications.yaml"])
@@ -61,17 +63,14 @@ class Foundation(Framework):
         foundation_name = current_settings["foundation_name"]
         return f"{realm_name}/_/{foundation_name}/_/terraform/state"
 
-    def prepare(self):
+    def prepare(self, env: str = None, skip_terraform: bool = False):
         self.update_requirements()
         self.install_requirements()
         self.load_modules()
-        self.enable_environments("prd")
-        """
-        self.enable_environments("prd")
+        self.enable_environments(env)
         if not skip_terraform:
-            self.terraform_init("prd")
-            self.terraform_apply("prd")
-        """
+            self.terraform_init(env)
+            self.terraform_apply(env)
 
     def register_module(self, module_name: str, package: str, module_class: str):
         if not self.package_pattern.match(package):
@@ -89,11 +88,6 @@ class Foundation(Framework):
         with open(self.module_yaml, 'w') as file:
             yaml.dump(module_dict, file, default_flow_style=False, sort_keys=False)
 
-    def init_module(self, module_name: str, package: str, module_class: str):
-        self.register_module(module_name, package, module_class)
-        self.update_requirements()
-        self.install_requirements()
-
     def create_app(self, app_name: str):
         print(f"Creating application: {app_name}")
 
@@ -103,27 +97,39 @@ def main():
     parser = argparse.ArgumentParser(description='Foundation tools')
     subparsers = parser.add_subparsers(dest='command', help='Available commands')
 
-    # Create the parser for the "prepare" command
-    parser_create = subparsers.add_parser('init-module', help='Initialization of a new module')
-    parser_create.add_argument('-n', '--module_name', type=str, help='Create files relates to module')
+    sub_parser = subparsers.add_parser('init-module', help='Initialization of a new module')
+    sub_parser.add_argument('-n', '--module-uri', type=str,
+                            help='Module uri to be added in format: <package_name>@<version>/<module_name>')
 
-    parser_prepare = subparsers.add_parser('prepare', help='Prepare Modules for a given environment')
-    parser_prepare.add_argument('-e', '--env_name', type=str, help='Environment Name')
+    sub_parser = subparsers.add_parser('activate-module', help='Activation of a new module to be used in foundation')
+    sub_parser.add_argument('-n', '--module-uri', type=str,
+                            help='Module name to be activated in format: <package_name>@<version>/<module_name>')
 
-    parser_prepare = subparsers.add_parser('build', help='Prepare Modules for a given environment')
-    parser_prepare.add_argument('-e', '--env_name', type=str, help='Environment Name')
+    subparsers.add_parser('plan', help='Prepare Foundation Deploy time objects')
+
+    sub_parser = subparsers.add_parser('apply', help='Prepare Foundation Deploy time objects')
+    sub_parser.add_argument('-y', '--auto-approve', type=str, help='Approve apply automatically')
+
+    sub_parser = subparsers.add_parser('destroy', help='Prepare Foundation Deploy time objects')
+    sub_parser.add_argument('-y', '--auto-approve', type=str, help='Approve destroy automatically')
 
     # Parse the arguments
     args = parser.parse_args()
 
-    # Handle different commands
+    # Handle different commands for the given Foundation
     foundation = Foundation()
-    if args.command == 'init-module':
-        foundation.install_requirements()
-    elif args.command == "prepare":
-        foundation.prepare()
-    elif args.command == "build":
-        foundation.prepare()
+    if args.command == "init-module":
+        foundation.init_module(module_uri=args.module_uri)
+    elif args.command == "activate-module":
+        foundation.activate_module(module_uri=args.module_uri)
+    elif args.command == "plan":
+        foundation.prepare(skip_terraform=True)
+    elif args.command == "apply":
+        foundation.prepare(skip_terraform=True)
+        foundation.terraform_init(env=foundation.FOUNDATION_ENV)
+        foundation.terraform_apply(env=foundation.FOUNDATION_ENV, auto_approve=args.auto_approve)
+    elif args.command == "destroy":
+        foundation.terraform_destroy(env=foundation.FOUNDATION_ENV, auto_approve=args.auto_approve)
     else:
         # If no command is provided, show help
         parser.print_help()
