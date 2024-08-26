@@ -130,6 +130,7 @@ def main():
         foundation.terraform_init(env=foundation.FOUNDATION_ENV)
         foundation.terraform_apply(env=foundation.FOUNDATION_ENV, auto_approve=args.auto_approve)
     elif args.command == "destroy":
+        foundation.prepare(skip_terraform=True)
         foundation.terraform_destroy(env=foundation.FOUNDATION_ENV, auto_approve=args.auto_approve)
     else:
         # If no command is provided, show help

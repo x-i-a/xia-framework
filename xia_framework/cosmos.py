@@ -106,6 +106,7 @@ def main():
         cosmos.terraform_init(env=cosmos.COSMOS_ENV)
         cosmos.terraform_apply(env=cosmos.COSMOS_ENV, auto_approve=args.auto_approve)
     elif args.command == "destroy":
+        cosmos.prepare(skip_terraform=True)
         cosmos.terraform_destroy(env=cosmos.COSMOS_ENV, auto_approve=args.auto_approve)
     else:
         # If no command is provided, show help

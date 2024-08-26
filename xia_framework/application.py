@@ -105,13 +105,13 @@ def main():
     if args.command == "init-module":
         application.init_module(module_uri=args.module_uri)
     elif args.command == "plan":
-        application.prepare(skip_terraform=True)
+        application.prepare(env_name=args.env_name, skip_terraform=True)
     elif args.command == "apply":
-        application.prepare(skip_terraform=True)
-        print(f"current param: {args.env_name}")
+        application.prepare(env_name=args.env_name, skip_terraform=True)
         application.terraform_init(env=args.env_name)
         application.terraform_apply(env=args.env_name, auto_approve=args.auto_approve)
     elif args.command == "destroy":
+        application.prepare(env_name=args.env_name, skip_terraform=True)
         application.terraform_destroy(env=args.env_name, auto_approve=args.auto_approve)
     else:
         # If no command is provided, show help
