@@ -101,6 +101,7 @@ def main():
         cosmos.prepare(skip_terraform=True)
     elif args.command == "apply":
         cosmos.prepare(skip_terraform=True)
+        cosmos.terraform_init(env=cosmos.COSMOS_ENV)
         cosmos.terraform_apply(env=cosmos.COSMOS_ENV, auto_approve=args.auto_approve)
     elif args.command == "destroy":
         cosmos.terraform_destroy(env=cosmos.COSMOS_ENV, auto_approve=args.auto_approve)
