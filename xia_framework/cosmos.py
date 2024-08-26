@@ -64,26 +64,26 @@ def main():
     parser = argparse.ArgumentParser(description='Cosmos tools')
     subparsers = parser.add_subparsers(dest='command', help='Available commands')
 
-    parser = subparsers.add_parser('bigbang', help='Create Cosmos Singularity')
-    parser.add_argument('-t', '--topology',
-                        type=str, help='Cosmos topology', default="github:x-i-a/xia-cosmos-template")
-    parser.add_argument('-n', '--name', type=str, help='Cosmos Name')
+    sub_parser = subparsers.add_parser('bigbang', help='Create Cosmos Singularity')
+    sub_parser.add_argument('-t', '--topology',
+                            type=str, help='Cosmos topology', default="github:x-i-a/xia-cosmos-template")
+    sub_parser.add_argument('-n', '--name', type=str, help='Cosmos Name')
 
-    parser = subparsers.add_parser('init-module', help='Initialization of a new module')
-    parser.add_argument('-n', '--module-uri', type=str,
-                        help='Module uri to be added in format: <package_name>@<version>/<module_name>')
+    sub_parser = subparsers.add_parser('init-module', help='Initialization of a new module')
+    sub_parser.add_argument('-n', '--module-uri', type=str,
+                            help='Module uri to be added in format: <package_name>@<version>/<module_name>')
 
-    parser = subparsers.add_parser('activate-module', help='Activation of a new module to be used in foundation')
-    parser.add_argument('-n', '--module-uri', type=str,
-                        help='Module name to be activated in format: <package_name>@<version>/<module_name>')
+    sub_parser = subparsers.add_parser('activate-module', help='Activation of a new module to be used in foundation')
+    sub_parser.add_argument('-n', '--module-uri', type=str,
+                            help='Module name to be activated in format: <package_name>@<version>/<module_name>')
 
     subparsers.add_parser('plan', help='Prepare Cosmos Deploy time objects')
 
-    parser = subparsers.add_parser('apply', help='Prepare Cosmos Deploy time objects')
-    parser.add_argument('-y', '--auto-approve', type=str, help='Approve apply automatically')
+    sub_parser = subparsers.add_parser('apply', help='Prepare Cosmos Deploy time objects')
+    sub_parser.add_argument('-y', '--auto-approve', type=str, help='Approve apply automatically')
 
-    parser = subparsers.add_parser('destroy', help='Prepare Cosmos Deploy time objects')
-    parser.add_argument('-y', '--auto-approve', type=str, help='Approve destroy automatically')
+    sub_parser = subparsers.add_parser('destroy', help='Prepare Cosmos Deploy time objects')
+    sub_parser.add_argument('-y', '--auto-approve', type=str, help='Approve destroy automatically')
 
     # Parse the arguments
     args = parser.parse_args()
