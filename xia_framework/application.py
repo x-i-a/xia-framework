@@ -72,7 +72,7 @@ class Application(Framework):
         current_settings = landscape_dict["settings"]
         realm_name = current_settings["realm_name"]
         foundation_name = current_settings["foundation_name"]
-        application_name = current_settings["foundation_name"]
+        application_name = current_settings["application_name"]
         return f"{realm_name}/_/{foundation_name}/{application_name}/terraform/state"
 
 
