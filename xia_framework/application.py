@@ -108,6 +108,7 @@ def main():
         application.prepare(skip_terraform=True)
     elif args.command == "apply":
         application.prepare(skip_terraform=True)
+        print(f"current param: {args.env_name}")
         application.terraform_init(env=args.env_name)
         application.terraform_apply(env=args.env_name, auto_approve=args.auto_approve)
     elif args.command == "destroy":
