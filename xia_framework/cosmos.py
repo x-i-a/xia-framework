@@ -47,7 +47,7 @@ class Cosmos(Framework):
             else:
                 print(r.stderr)
 
-    def terraform_get_state_file_prefix(self):
+    def terraform_get_state_file_prefix(self, env_name: str = None):
         return f"_/terraform/state"
 
     def prepare(self, env: str = None, skip_terraform: bool = False):

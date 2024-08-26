@@ -113,7 +113,7 @@ class Framework:
         if not requirements_existed:
             os.remove(self.requirements_txt)
 
-    def terraform_get_state_file_prefix(self):
+    def terraform_get_state_file_prefix(self, env_name: str = None):
         raise NotImplementedError
 
     def terraform_init(self, env: str):

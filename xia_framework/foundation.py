@@ -55,7 +55,7 @@ class Foundation(Framework):
         # self.install_requirements()
         # self.enable_modules()
 
-    def terraform_get_state_file_prefix(self):
+    def terraform_get_state_file_prefix(self, env_name: str = None):
         with open(self.landscape_yaml, 'r') as file:
             landscape_dict = yaml.safe_load(file) or {}
         current_settings = landscape_dict.get("settings", {})
