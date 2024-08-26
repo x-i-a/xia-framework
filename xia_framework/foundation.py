@@ -111,7 +111,7 @@ def main():
     sub_parser = subparsers.add_parser('apply', help='Prepare Foundation Deploy time objects')
     sub_parser.add_argument('-y', '--auto-approve', type=str, help='Approve apply automatically')
 
-    sub_parser = subparsers.add_parser('destroy', help='Prepare Foundation Deploy time objects')
+    sub_parser = subparsers.add_parser('destroy', help='Destroy Foundation Deploy time objects')
     sub_parser.add_argument('-y', '--auto-approve', type=str, help='Approve destroy automatically')
 
     # Parse the arguments

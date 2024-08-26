@@ -72,27 +72,36 @@ def main():
     subparsers = parser.add_subparsers(dest='command', help='Available commands')
 
     # Create the parser for the "prepare" command
-    parser_create = subparsers.add_parser('init-module', help='Initialization of a new module')
-    parser_create.add_argument('-n', '--module_name', type=str, help='Create files relates to module')
+    sub_parser = subparsers.add_parser('init-module', help='Initialization of a new module')
+    sub_parser.add_argument('-n', '--module-uri', type=str,
+                            help='Module uri to be added in format: <package_name>@<version>/<module_name>')
 
-    parser_prepare = subparsers.add_parser('prepare', help='Prepare Modules for a given environment')
-    parser_prepare.add_argument('-e', '--env_name', type=str, help='Environment Name')
+    sub_parser = subparsers.add_parser('plan', help='Prepare Application Deploy time objects')
+    sub_parser.add_argument('-e', '--env_name', type=str, help='Environment Name')
 
-    parser_prepare = subparsers.add_parser('build', help='Prepare Modules for a given environment')
-    parser_prepare.add_argument('-e', '--env_name', type=str, help='Environment Name')
+    sub_parser = subparsers.add_parser('apply', help='Prepare Application Deploy time objects')
+    sub_parser.add_argument('-e', '--env_name', type=str, help='Environment Name')
+    sub_parser.add_argument('-y', '--auto-approve', type=str, help='Approve apply automatically')
+
+    sub_parser = subparsers.add_parser('destroy', help='Prepare Application Deploy time objects')
+    sub_parser.add_argument('-e', '--env_name', type=str, help='Environment Name')
+    sub_parser.add_argument('-y', '--auto-approve', type=str, help='Approve destroy automatically')
 
     # Parse the arguments
     args = parser.parse_args()
 
     # Handle different commands
     application = Application()
-    if args.command == 'init-module':
-        application.install_requirements()
-        application.create(module_uri=args.module_name)
-    elif args.command == "prepare":
-        application.prepare(env_name=args.env_name)
-    elif args.command == "build":
-        application.prepare(env_name=args.env_name)
+    if args.command == "init-module":
+        application.init_module(module_uri=args.module_uri)
+    elif args.command == "plan":
+        application.prepare(skip_terraform=True)
+    elif args.command == "apply":
+        application.prepare(skip_terraform=True)
+        application.terraform_init(env=args.env_name)
+        application.terraform_apply(env=args.env_name, auto_approve=args.auto_approve)
+    elif args.command == "destroy":
+        application.terraform_destroy(env=args.env_name, auto_approve=args.auto_approve)
     else:
         # If no command is provided, show help
         parser.print_help()
