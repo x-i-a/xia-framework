@@ -69,6 +69,9 @@ class Application(Framework):
     def terraform_get_state_file_prefix(self, env_name: str = None):
         with open(self.landscape_yaml, 'r') as file:
             landscape_dict = yaml.safe_load(file) or {}
+        environment_settings = landscape_dict["environments"]
+        if env_name not in environment_settings:
+            raise ValueError(f"Environment {env_name} not defined in landscape.yaml")
         current_settings = landscape_dict["settings"]
         realm_name = current_settings["realm_name"]
         foundation_name = current_settings["foundation_name"]
