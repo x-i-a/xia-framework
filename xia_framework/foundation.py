@@ -7,7 +7,7 @@ from xia_framework.framework import Framework
 
 
 class Foundation(Framework):
-    FOUNDATION_ENV = 'prd'  # Foundation default environment name
+    FOUNDATION_ENV = 'base'  # Foundation default environment name
 
     def __init__(self, config_dir: str = "config", **kwargs):
         super().__init__(config_dir=config_dir, **kwargs)
