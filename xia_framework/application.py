@@ -46,7 +46,6 @@ class Application(Framework):
                     package_dict["packages"][package_name] = None
                 with open(self.package_yaml, 'w') as package_file:
                     self.yaml.dump(package_dict, package_file)
-            module_dict[module_name]["class"] = module_class_name
             with open(self.module_yaml, 'w') as module_file:
                 self.yaml.dump(module_dict, module_file)
 
