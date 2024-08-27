@@ -41,20 +41,6 @@ class Foundation(Framework):
             else:
                 print(r.stderr)
 
-    def birth(self, foundation_name: str):
-        """Creation of a foundation
-
-        Args:
-            foundation_name: name of foundation
-        """
-        self.create_backend(foundation_name)
-        # self.terraform_init('prd')
-        # self.register_module("gcp-module-project", "Project")
-        # self.register_module("gcp-module-application", "Application")
-        # self.update_requirements()
-        # self.install_requirements()
-        # self.enable_modules()
-
     def terraform_get_state_file_prefix(self, env_name: str = None):
         with open(self.landscape_yaml, 'r') as file:
             landscape_dict = yaml.safe_load(file) or {}

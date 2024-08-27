@@ -6,22 +6,6 @@ from xia_framework.framework import Framework
 
 
 class Application(Framework):
-    @classmethod
-    def _fill_full_dependencies(cls, module_dict: dict):
-        counter = 1  # Trigger the first iteration
-        while counter > 0:
-            counter = 0
-            for module_name, module_config in module_dict.items():
-                for dependency in module_config["_dependencies"]:
-                    for sub_dep in module_dict[dependency.replace("-", "_")]["_dependencies"]:
-                        if sub_dep.replace("-", "_") not in module_config["_dependencies"]:
-                            module_config["_dependencies"].append(sub_dep.replace("-", "_"))
-                            counter += 1
-
-    @classmethod
-    def _get_dependencies(cls, module_class):
-        return module_class.deploy_depends
-
     def prepare(self, env_name: str = "base", skip_terraform: bool = False):
         self.install_requirements()
         self.load_modules()
