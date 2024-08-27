@@ -153,10 +153,9 @@ class Framework:
         # Step 1: Get All Module Class
         for module_name, module_config in module_dict.items():
             module_obj = importlib.import_module(module_config["package"].replace("-", "_"))
-            module_class_name = getattr(module_obj, "modules", {}).get(module_name, module_config["class"])
+            module_class_name = getattr(module_obj, "modules", {})[module_name]
             module_class = getattr(module_obj, module_class_name)
             module_config["_class"] = module_class
-            module_config["_dependencies"] = module_config.get("depends_on", []).copy()
 
         # Step 2: Apply Events
         for module_name, module_config in module_dict.items():
