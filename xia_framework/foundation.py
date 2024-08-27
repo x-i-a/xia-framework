@@ -7,8 +7,6 @@ from xia_framework.framework import Framework
 
 
 class Foundation(Framework):
-    FOUNDATION_ENV = 'base'  # Foundation default environment name
-
     def __init__(self, config_dir: str = "config", **kwargs):
         super().__init__(config_dir=config_dir, **kwargs)
         self.application_yaml = os.path.sep.join([self.config_dir, "applications.yaml"])
@@ -50,7 +48,7 @@ class Foundation(Framework):
         return f"{realm_name}/_/{foundation_name}/_/terraform/state"
 
     def prepare(self, env: str = None, skip_terraform: bool = False):
-        env = env if env else self.FOUNDATION_ENV
+        env = env if env else self.BASE_ENV
         self.update_requirements()
         self.install_requirements()
         self.load_modules()
@@ -113,11 +111,11 @@ def main():
         foundation.prepare(skip_terraform=True)
     elif args.command == "apply":
         foundation.prepare(skip_terraform=True)
-        foundation.terraform_init(env=foundation.FOUNDATION_ENV)
-        foundation.terraform_apply(env=foundation.FOUNDATION_ENV, auto_approve=args.auto_approve)
+        foundation.terraform_init(env=foundation.BASE_ENV)
+        foundation.terraform_apply(env=foundation.BASE_ENV, auto_approve=args.auto_approve)
     elif args.command == "destroy":
         foundation.prepare(skip_terraform=True)
-        foundation.terraform_destroy(env=foundation.FOUNDATION_ENV, auto_approve=args.auto_approve)
+        foundation.terraform_destroy(env=foundation.BASE_ENV, auto_approve=args.auto_approve)
     else:
         # If no command is provided, show help
         parser.print_help()

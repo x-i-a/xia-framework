@@ -8,6 +8,8 @@ import importlib
 
 
 class Framework:
+    BASE_ENV = "base"
+
     def __init__(self, config_dir: str = "config", **kwargs):
         self.yaml = YAML()
         yaml.preserve_quotes = True

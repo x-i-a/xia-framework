@@ -6,8 +6,6 @@ from xia_framework.framework import Framework
 
 
 class Cosmos(Framework):
-    COSMOS_ENV = 'base'  # Cosmos default environment name
-
     def bigbang(self, cosmos_name: str):
         """Create the cosmos administration project
 
@@ -51,7 +49,7 @@ class Cosmos(Framework):
         return f"_/terraform/state"
 
     def prepare(self, env: str = None, skip_terraform: bool = False):
-        env = env if env else self.COSMOS_ENV
+        env = env if env else self.BASE_ENV
         self.update_requirements()
         self.install_requirements()
         self.load_modules()
@@ -103,11 +101,11 @@ def main():
         cosmos.prepare(skip_terraform=True)
     elif args.command == "apply":
         cosmos.prepare(skip_terraform=True)
-        cosmos.terraform_init(env=cosmos.COSMOS_ENV)
-        cosmos.terraform_apply(env=cosmos.COSMOS_ENV, auto_approve=args.auto_approve)
+        cosmos.terraform_init(env=cosmos.BASE_ENV)
+        cosmos.terraform_apply(env=cosmos.BASE_ENV, auto_approve=args.auto_approve)
     elif args.command == "destroy":
         cosmos.prepare(skip_terraform=True)
-        cosmos.terraform_destroy(env=cosmos.COSMOS_ENV, auto_approve=args.auto_approve)
+        cosmos.terraform_destroy(env=cosmos.BASE_ENV, auto_approve=args.auto_approve)
     else:
         # If no command is provided, show help
         parser.print_help()
