@@ -7,7 +7,7 @@ import shutil
 import importlib
 
 
-class Framework:
+class Base:
     BASE_ENV = "base"
 
     def __init__(self, config_dir: str = "config", **kwargs):

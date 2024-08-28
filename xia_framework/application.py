@@ -2,10 +2,10 @@ import argparse
 import subprocess
 import importlib
 import yaml
-from xia_framework.framework import Framework
+from xia_framework.base import Base
 
 
-class Application(Framework):
+class Application(Base):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
