@@ -94,10 +94,9 @@ class Application(Framework):
         args = parser.parse_args()
 
         if args.command in self.run_book:
-            self.run_book[args.command](args)
+            self.run_book[args.command]["cmd"](args)
         else:
             parser.print_help()
-        raise NotImplementedError
         """
         if args.command == "init-module":
             application.init_module(module_uri=args.module_uri)
