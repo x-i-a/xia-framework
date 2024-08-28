@@ -71,7 +71,7 @@ class Application(Framework):
         subparsers = parser.add_subparsers(dest='command', help='Available commands')
 
         # Create the parser for the "prepare" command
-        for cmd, cmd_config in self.run_book:
+        for cmd, cmd_config in self.run_book.items():
             cmd_config["cli"](subparsers=subparsers)
         """
         sub_parser = subparsers.add_parser('init-module', help='Initialization of a new module')
