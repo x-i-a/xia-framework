@@ -2,10 +2,10 @@ import os
 import argparse
 import subprocess
 import yaml
-from xia_framework.base import Base
+from xia_framework.application import Application
 
 
-class Cosmos(Base):
+class Cosmos(Application):
     def bigbang(self, cosmos_name: str):
         """Create the cosmos administration project
 

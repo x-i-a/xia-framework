@@ -2,10 +2,10 @@ import os
 import argparse
 import subprocess
 import yaml
-from xia_framework.base import Base
+from xia_framework.application import Application
 
 
-class Foundation(Base):
+class Foundation(Application):
     def __init__(self, config_dir: str = "config", **kwargs):
         super().__init__(config_dir=config_dir, **kwargs)
         self.application_yaml = os.path.sep.join([self.config_dir, "applications.yaml"])

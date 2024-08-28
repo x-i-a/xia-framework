@@ -1,5 +1,5 @@
-from xia_framework.base import Base
+from xia_framework.application import Application
 
 
-class Realm(Base):
+class Realm(Application):
     pass
