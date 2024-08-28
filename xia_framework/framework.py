@@ -175,15 +175,15 @@ class Framework:
         if not requirements_existed:
             os.remove(self.requirements_txt)
 
-    def prepare(self, env: str = None, skip_terraform: bool = False):
-        env = env if env else self.BASE_ENV
+    def prepare(self, env_name: str = None, skip_terraform: bool = False):
+        env_name = env_name if env_name else self.BASE_ENV
         self.update_requirements()
         self.install_requirements()
         self.load_modules()
-        self.enable_environments(env)
+        self.enable_environments(env_name)
         if not skip_terraform:
-            self.terraform_init(env)
-            self.terraform_apply(env)
+            self.terraform_init(env_name)
+            self.terraform_apply(env_name)
 
     def terraform_get_state_file_prefix(self, env_name: str = None):
         raise NotImplementedError
