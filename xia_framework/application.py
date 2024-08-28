@@ -99,6 +99,7 @@ class Application(Framework):
             self.run_book[args.command](args)
         else:
             parser.print_help()
+        raise NotImplementedError
         """
         if args.command == "init-module":
             application.init_module(module_uri=args.module_uri)
