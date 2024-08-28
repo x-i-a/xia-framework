@@ -9,12 +9,12 @@ class Application(Base):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.run_book = {
+        self.run_book.update({
             "init-module": {"cli": self.cli_init_module, "run": self.cmd_init_module},
             "plan": {"cli": self.cli_plan, "run": self.cmd_plan},
             "apply": {"cli": self.cli_apply, "run": self.cmd_apply},
             "destroy": {"cli": self.cli_destroy, "run": self.cmd_destroy},
-        }
+        })
 
     def terraform_get_state_file_prefix(self, env_name: str = None):
         with open(self.landscape_yaml, 'r') as file:
@@ -65,54 +65,6 @@ class Application(Base):
     def cmd_destroy(self, args):
         self.prepare(env_name=args.env_name, skip_terraform=True)
         self.terraform_destroy(env=args.env_name, auto_approve=args.auto_approve)
-
-    def main(self):
-        parser = argparse.ArgumentParser(description=f'{self.__class__.__name__} tools')
-        subparsers = parser.add_subparsers(dest='command', help='Available commands')
-
-        # Create the sub-parsers
-        for cmd in self.run_book:
-            self.run_book[cmd]["cli"](subparsers=subparsers)
-        """
-        sub_parser = subparsers.add_parser('init-module', help='Initialization of a new module')
-        sub_parser.add_argument('-n', '--module-uri', type=str,
-                                help='Module uri to be added in format: <package_name>@<version>/<module_name>')
-
-        sub_parser = subparsers.add_parser('plan', help='Prepare Application Deploy time objects')
-        sub_parser.add_argument('-e', '--env_name', type=str, help='Environment Name')
-
-        sub_parser = subparsers.add_parser('apply', help='Prepare Application Deploy time objects')
-        sub_parser.add_argument('-e', '--env_name', type=str, help='Environment Name')
-        sub_parser.add_argument('-y', '--auto-approve', type=str, help='Approve apply automatically')
-
-        sub_parser = subparsers.add_parser('destroy', help='Prepare Application Deploy time objects')
-        sub_parser.add_argument('-e', '--env_name', type=str, help='Environment Name')
-        sub_parser.add_argument('-y', '--auto-approve', type=str, help='Approve destroy automatically')
-        """
-
-        # Parse the arguments
-        args = parser.parse_args()
-
-        if args.command in self.run_book:
-            self.run_book[args.command]["run"](args)
-        else:
-            parser.print_help()
-        """
-        if args.command == "init-module":
-            application.init_module(module_uri=args.module_uri)
-        elif args.command == "plan":
-            application.prepare(env_name=args.env_name, skip_terraform=True)
-        elif args.command == "apply":
-            application.prepare(env_name=args.env_name, skip_terraform=True)
-            application.terraform_init(env=args.env_name)
-            application.terraform_apply(env=args.env_name, auto_approve=args.auto_approve)
-        elif args.command == "destroy":
-            application.prepare(env_name=args.env_name, skip_terraform=True)
-            application.terraform_destroy(env=args.env_name, auto_approve=args.auto_approve)
-        else:
-            # If no command is provided, show help
-            parser.print_help()
-        """
 
 
 if __name__ == "__main__":

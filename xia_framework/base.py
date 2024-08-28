@@ -1,4 +1,5 @@
 import os
+import argparse
 import subprocess
 import yaml
 from ruamel.yaml import YAML
@@ -11,6 +12,7 @@ class Base:
     BASE_ENV = "base"
 
     def __init__(self, config_dir: str = "config", **kwargs):
+        self.run_book = {}
         self.yaml = YAML()
         yaml.preserve_quotes = True
         self.config_dir = config_dir
@@ -245,3 +247,19 @@ class Base:
         else:
             shutil.copytree(os.path.join(self.env_dir, "base"), os.path.join(self.env_dir, env))
 
+    def main(self):
+        parser = argparse.ArgumentParser(description=f'{self.__class__.__name__} tools')
+        subparsers = parser.add_subparsers(dest='command', help='Available commands')
+
+        # Create the sub-parsers
+        for cmd in self.run_book:
+            self.run_book[cmd]["cli"](subparsers=subparsers)
+
+        # Parse the arguments
+        args = parser.parse_args()
+
+        # Run the command
+        if args.command in self.run_book:
+            self.run_book[args.command]["run"](args)
+        else:
+            parser.print_help()
