@@ -85,11 +85,6 @@ class Foundation(Framework):
         with open(self.module_yaml, 'w') as file:
             yaml.dump(module_dict, file, default_flow_style=False, sort_keys=False)
 
-    def init_module(self, module_name: str, package: str, module_class: str):
-        self.register_module(module_name, package, module_class)
-        self.update_requirements()
-        self.install_requirements()
-
     def create_app(self, app_name: str):
         print(f"Creating application: {app_name}")
 
