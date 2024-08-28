@@ -6,6 +6,16 @@ from xia_framework.framework import Framework
 
 
 class Application(Framework):
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.run_book = {
+            "init-module": self.cmd_init_module,
+            "plan": self.cmd_plan,
+            "apply": self.cmd_appy,
+            "destroy": self.cmd_destroy,
+        }
+
     def terraform_get_state_file_prefix(self, env_name: str = None):
         with open(self.landscape_yaml, 'r') as file:
             landscape_dict = yaml.safe_load(file) or {}
@@ -41,31 +51,30 @@ class Application(Framework):
         sub_parser.add_argument('-e', '--env_name', type=str, help='Environment Name')
         sub_parser.add_argument('-y', '--auto-approve', type=str, help='Approve destroy automatically')
 
-    def execute(self, args, help_func):
-        if args.command == "init-module":
-            self.init_module(module_uri=args.module_uri)
-        elif args.command == "plan":
-            self.prepare(env_name=args.env_name, skip_terraform=True)
-        elif args.command == "apply":
-            self.prepare(env_name=args.env_name, skip_terraform=True)
-            self.terraform_init(env=args.env_name)
-            self.terraform_apply(env=args.env_name, auto_approve=args.auto_approve)
-        elif args.command == "destroy":
-            self.prepare(env_name=args.env_name, skip_terraform=True)
-            self.terraform_destroy(env=args.env_name, auto_approve=args.auto_approve)
-        else:
-            help_func()
+    def cmd_init_module(self, args):
+        return self.init_module(module_uri=args.module_uri)
 
-    @classmethod
-    def main(cls):
+    def cmd_plan(self, args):
+        return self.prepare(env_name=args.env_name, skip_terraform=True)
+
+    def cmd_appy(self, args):
+        self.prepare(env_name=args.env_name, skip_terraform=True)
+        self.terraform_init(env=args.env_name)
+        self.terraform_apply(env=args.env_name, auto_approve=args.auto_approve)
+
+    def cmd_destroy(self, args):
+        self.prepare(env_name=args.env_name, skip_terraform=True)
+        self.terraform_destroy(env=args.env_name, auto_approve=args.auto_approve)
+
+    def main(self):
         parser = argparse.ArgumentParser(description='Application tools')
         subparsers = parser.add_subparsers(dest='command', help='Available commands')
 
         # Create the parser for the "prepare" command
-        cls.cli_init_module(subparsers=subparsers)
-        cls.cli_plan(subparsers=subparsers)
-        cls.cli_apply(subparsers=subparsers)
-        cls.cli_destroy(subparsers=subparsers)
+        self.cli_init_module(subparsers=subparsers)
+        self.cli_plan(subparsers=subparsers)
+        self.cli_apply(subparsers=subparsers)
+        self.cli_destroy(subparsers=subparsers)
         """
         sub_parser = subparsers.add_parser('init-module', help='Initialization of a new module')
         sub_parser.add_argument('-n', '--module-uri', type=str,
@@ -86,9 +95,10 @@ class Application(Framework):
         # Parse the arguments
         args = parser.parse_args()
 
-        # Execution
-        application = cls()
-        application.execute(args, parser.print_help)
+        if args.command in self.run_book:
+            self.run_book[args.command](args)
+        else:
+            parser.print_help()
         """
         if args.command == "init-module":
             application.init_module(module_uri=args.module_uri)
@@ -108,4 +118,4 @@ class Application(Framework):
 
 
 if __name__ == "__main__":
-    Application.main()
+    Application().main()
