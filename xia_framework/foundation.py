@@ -79,3 +79,50 @@ class Foundation(Framework):
     def create_app(self, app_name: str):
         print(f"Creating application: {app_name}")
 
+
+def main():
+    # Top level parser
+    parser = argparse.ArgumentParser(description='Foundation tools')
+    subparsers = parser.add_subparsers(dest='command', help='Available commands')
+
+    sub_parser = subparsers.add_parser('init-module', help='Initialization of a new module')
+    sub_parser.add_argument('-n', '--module-uri', type=str,
+                            help='Module uri to be added in format: <package_name>@<version>/<module_name>')
+
+    sub_parser = subparsers.add_parser('activate-module', help='Activation of a new module to be used in foundation')
+    sub_parser.add_argument('-n', '--module-uri', type=str,
+                            help='Module name to be activated in format: <package_name>@<version>/<module_name>')
+
+    subparsers.add_parser('plan', help='Prepare Foundation Deploy time objects')
+
+    sub_parser = subparsers.add_parser('apply', help='Prepare Foundation Deploy time objects')
+    sub_parser.add_argument('-y', '--auto-approve', type=str, help='Approve apply automatically')
+
+    sub_parser = subparsers.add_parser('destroy', help='Destroy Foundation Deploy time objects')
+    sub_parser.add_argument('-y', '--auto-approve', type=str, help='Approve destroy automatically')
+
+    # Parse the arguments
+    args = parser.parse_args()
+
+    # Handle different commands for the given Foundation
+    foundation = Foundation()
+    if args.command == "init-module":
+        foundation.init_module(module_uri=args.module_uri)
+    elif args.command == "activate-module":
+        foundation.activate_module(module_uri=args.module_uri)
+    elif args.command == "plan":
+        foundation.prepare(skip_terraform=True)
+    elif args.command == "apply":
+        foundation.prepare(skip_terraform=True)
+        foundation.terraform_init(env=foundation.BASE_ENV)
+        foundation.terraform_apply(env=foundation.BASE_ENV, auto_approve=args.auto_approve)
+    elif args.command == "destroy":
+        foundation.prepare(skip_terraform=True)
+        foundation.terraform_destroy(env=foundation.BASE_ENV, auto_approve=args.auto_approve)
+    else:
+        # If no command is provided, show help
+        parser.print_help()
+
+
+if __name__ == "__main__":
+    main()
