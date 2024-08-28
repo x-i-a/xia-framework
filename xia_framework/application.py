@@ -19,14 +19,23 @@ class Application(Framework):
         return f"{realm_name}/_/{foundation_name}/{application_name}/{env_name}/terraform/state"
 
     @classmethod
+    def cli_init_module(cls, subparsers):
+        sub_parser = subparsers.add_parser('init-module', help='Initialization of a new module')
+        sub_parser.add_argument('-n', '--module-uri', type=str,
+                                help='Module uri to be added in format: <package_name>@<version>/<module_name>')
+
+    @classmethod
     def main(cls):
         parser = argparse.ArgumentParser(description='Application tools')
         subparsers = parser.add_subparsers(dest='command', help='Available commands')
 
         # Create the parser for the "prepare" command
+        cls.cli_init_module(subparsers=subparsers)
+        """
         sub_parser = subparsers.add_parser('init-module', help='Initialization of a new module')
         sub_parser.add_argument('-n', '--module-uri', type=str,
                                 help='Module uri to be added in format: <package_name>@<version>/<module_name>')
+        """
 
         sub_parser = subparsers.add_parser('plan', help='Prepare Application Deploy time objects')
         sub_parser.add_argument('-e', '--env_name', type=str, help='Environment Name')
