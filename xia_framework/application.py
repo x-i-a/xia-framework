@@ -70,7 +70,7 @@ class Application(Framework):
         parser = argparse.ArgumentParser(description='Application tools')
         subparsers = parser.add_subparsers(dest='command', help='Available commands')
 
-        # Create the parser for the "prepare" command
+        # Create the sub-parsers
         for cmd in self.run_book:
             self.run_book[cmd]["cli"](subparsers=subparsers)
         """
