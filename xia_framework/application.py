@@ -6,7 +6,6 @@ from xia_framework.base import Base
 
 
 class Application(Base):
-
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.run_book.update({
