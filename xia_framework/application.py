@@ -10,10 +10,10 @@ class Application(Framework):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.run_book = {
-            "init-module": self.cmd_init_module,
-            "plan": self.cmd_plan,
-            "apply": self.cmd_appy,
-            "destroy": self.cmd_destroy,
+            "init-module": {"cli": self.cli_init_module, "run": self.cmd_init_module},
+            "plan": {"cli": self.cli_plan, "run": self.cmd_plan},
+            "apply": {"cli": self.cli_apply, "run": self.cmd_apply},
+            "destroy": {"cli": self.cli_destroy, "run": self.cmd_destroy},
         }
 
     def terraform_get_state_file_prefix(self, env_name: str = None):
@@ -57,7 +57,7 @@ class Application(Framework):
     def cmd_plan(self, args):
         return self.prepare(env_name=args.env_name, skip_terraform=True)
 
-    def cmd_appy(self, args):
+    def cmd_apply(self, args):
         self.prepare(env_name=args.env_name, skip_terraform=True)
         self.terraform_init(env=args.env_name)
         self.terraform_apply(env=args.env_name, auto_approve=args.auto_approve)
@@ -71,10 +71,8 @@ class Application(Framework):
         subparsers = parser.add_subparsers(dest='command', help='Available commands')
 
         # Create the parser for the "prepare" command
-        self.cli_init_module(subparsers=subparsers)
-        self.cli_plan(subparsers=subparsers)
-        self.cli_apply(subparsers=subparsers)
-        self.cli_destroy(subparsers=subparsers)
+        for cmd, cmd_config in self.run_book:
+            cmd_config["cli"](subparsers=subparsers)
         """
         sub_parser = subparsers.add_parser('init-module', help='Initialization of a new module')
         sub_parser.add_argument('-n', '--module-uri', type=str,
