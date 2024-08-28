@@ -25,17 +25,36 @@ class Application(Framework):
                                 help='Module uri to be added in format: <package_name>@<version>/<module_name>')
 
     @classmethod
+    def cli_plan(cls, subparsers):
+        sub_parser = subparsers.add_parser('plan', help='Prepare Application Deploy time objects')
+        sub_parser.add_argument('-e', '--env_name', type=str, help='Environment Name')
+
+    @classmethod
+    def cli_apply(cls, subparsers):
+        sub_parser = subparsers.add_parser('apply', help='Prepare Application Deploy time objects')
+        sub_parser.add_argument('-e', '--env_name', type=str, help='Environment Name')
+        sub_parser.add_argument('-y', '--auto-approve', type=str, help='Approve apply automatically')
+
+    @classmethod
+    def cli_destroy(cls, subparsers):
+        sub_parser = subparsers.add_parser('destroy', help='Prepare Application Deploy time objects')
+        sub_parser.add_argument('-e', '--env_name', type=str, help='Environment Name')
+        sub_parser.add_argument('-y', '--auto-approve', type=str, help='Approve destroy automatically')
+
+    @classmethod
     def main(cls):
         parser = argparse.ArgumentParser(description='Application tools')
         subparsers = parser.add_subparsers(dest='command', help='Available commands')
 
         # Create the parser for the "prepare" command
         cls.cli_init_module(subparsers=subparsers)
+        cls.cli_plan(subparsers=subparsers)
+        cls.cli_apply(subparsers=subparsers)
+        cls.cli_destroy(subparsers=subparsers)
         """
         sub_parser = subparsers.add_parser('init-module', help='Initialization of a new module')
         sub_parser.add_argument('-n', '--module-uri', type=str,
                                 help='Module uri to be added in format: <package_name>@<version>/<module_name>')
-        """
 
         sub_parser = subparsers.add_parser('plan', help='Prepare Application Deploy time objects')
         sub_parser.add_argument('-e', '--env_name', type=str, help='Environment Name')
@@ -47,6 +66,7 @@ class Application(Framework):
         sub_parser = subparsers.add_parser('destroy', help='Prepare Application Deploy time objects')
         sub_parser.add_argument('-e', '--env_name', type=str, help='Environment Name')
         sub_parser.add_argument('-y', '--auto-approve', type=str, help='Approve destroy automatically')
+        """
 
         # Parse the arguments
         args = parser.parse_args()
