@@ -36,18 +36,18 @@ class Application(Framework):
 
     @classmethod
     def cli_plan(cls, subparsers):
-        sub_parser = subparsers.add_parser('plan', help='Prepare Application Deploy time objects')
+        sub_parser = subparsers.add_parser('plan', help=f'Prepare {cls.__name__} Deploy time objects')
         sub_parser.add_argument('-e', '--env_name', type=str, help='Environment Name')
 
     @classmethod
     def cli_apply(cls, subparsers):
-        sub_parser = subparsers.add_parser('apply', help='Prepare Application Deploy time objects')
+        sub_parser = subparsers.add_parser('apply', help=f'Prepare {cls.__name__} Deploy time objects')
         sub_parser.add_argument('-e', '--env_name', type=str, help='Environment Name')
         sub_parser.add_argument('-y', '--auto-approve', type=str, help='Approve apply automatically')
 
     @classmethod
     def cli_destroy(cls, subparsers):
-        sub_parser = subparsers.add_parser('destroy', help='Prepare Application Deploy time objects')
+        sub_parser = subparsers.add_parser('destroy', help=f'Prepare {cls.__name__} Deploy time objects')
         sub_parser.add_argument('-e', '--env_name', type=str, help='Environment Name')
         sub_parser.add_argument('-y', '--auto-approve', type=str, help='Approve destroy automatically')
 
@@ -67,7 +67,7 @@ class Application(Framework):
         self.terraform_destroy(env=args.env_name, auto_approve=args.auto_approve)
 
     def main(self):
-        parser = argparse.ArgumentParser(description='Application tools')
+        parser = argparse.ArgumentParser(description=f'{self.__class__.__name__} tools')
         subparsers = parser.add_subparsers(dest='command', help='Available commands')
 
         # Create the sub-parsers
