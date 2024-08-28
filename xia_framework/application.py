@@ -41,6 +41,23 @@ class Application(Framework):
         sub_parser.add_argument('-e', '--env_name', type=str, help='Environment Name')
         sub_parser.add_argument('-y', '--auto-approve', type=str, help='Approve destroy automatically')
 
+    def execute(self, args, help_func):
+        if args.command == "init-module":
+            self.init_module(module_uri=args.module_uri)
+        elif args.command == "plan":
+            self.prepare(env_name=args.env_name, skip_terraform=True)
+        elif args.command == "apply":
+            self.prepare(env_name=args.env_name, skip_terraform=True)
+            self.terraform_init(env=args.env_name)
+            self.terraform_apply(env=args.env_name, auto_approve=args.auto_approve)
+        elif args.command == "destroy":
+            self.prepare(env_name=args.env_name, skip_terraform=True)
+            self.terraform_destroy(env=args.env_name, auto_approve=args.auto_approve)
+        else:
+            help_func()
+            # If no command is provided, show help
+            parser.print_help()
+
     @classmethod
     def main(cls):
         parser = argparse.ArgumentParser(description='Application tools')
@@ -71,7 +88,10 @@ class Application(Framework):
         # Parse the arguments
         args = parser.parse_args()
 
+        # Execution
         application = cls()
+        application.execute(args, parser.print_help)
+        """
         if args.command == "init-module":
             application.init_module(module_uri=args.module_uri)
         elif args.command == "plan":
@@ -86,6 +106,7 @@ class Application(Framework):
         else:
             # If no command is provided, show help
             parser.print_help()
+        """
 
 
 if __name__ == "__main__":
