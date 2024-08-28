@@ -71,8 +71,8 @@ class Application(Framework):
         subparsers = parser.add_subparsers(dest='command', help='Available commands')
 
         # Create the parser for the "prepare" command
-        for cmd, cmd_config in self.run_book.items():
-            cmd_config["cli"](subparsers=subparsers)
+        for cmd in self.run_book:
+            self.run_book[cmd]["cli"](subparsers=subparsers)
         """
         sub_parser = subparsers.add_parser('init-module', help='Initialization of a new module')
         sub_parser.add_argument('-n', '--module-uri', type=str,
@@ -94,7 +94,7 @@ class Application(Framework):
         args = parser.parse_args()
 
         if args.command in self.run_book:
-            self.run_book[args.command]["cmd"](args)
+            self.run_book[args.command]["run"](args)
         else:
             parser.print_help()
         """
