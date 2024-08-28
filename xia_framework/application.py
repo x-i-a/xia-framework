@@ -6,12 +6,6 @@ from xia_framework.framework import Framework
 
 
 class Application(Framework):
-    def prepare(self, env_name: str = "base", skip_terraform: bool = False):
-        self.install_requirements()
-        self.load_modules()
-        if env_name != "base":
-            self.enable_environments(env_name)
-
     def create(self, module_uri: str):
         """Initialize a module
 
