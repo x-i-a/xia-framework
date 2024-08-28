@@ -55,8 +55,6 @@ class Application(Framework):
             self.terraform_destroy(env=args.env_name, auto_approve=args.auto_approve)
         else:
             help_func()
-            # If no command is provided, show help
-            parser.print_help()
 
     @classmethod
     def main(cls):
