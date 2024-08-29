@@ -60,7 +60,7 @@ class Cosmos(Application):
         sub_parser = subparsers.add_parser('bigbang', help='Create Cosmos Singularity')
         sub_parser.add_argument('-t', '--topology',
                                 type=str, help='Cosmos topology', default="github:x-i-a/xia-cosmos-template")
-        sub_parser.add_argument('-n', '--name', type=str, help='Cosmos Name')
+        sub_parser.add_argument('-p', '--params', type=str, help='Bigbang Parameters')
 
     @classmethod
     def cli_activate_module(cls, subparsers):
