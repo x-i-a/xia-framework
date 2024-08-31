@@ -18,8 +18,8 @@ class Cosmos(Application):
 
         TODO:
             * Activate Cloud Billing API during cosmos project creation
-            * Activate Cloud Resource Manager API during cosmos project creation
-            * Activate Identity and Access Management during cosmos project creation
+            * Activate Cloud Resource Manager API (cloudresourcemanager.) during cosmos project creation
+            * Activate Identity and Access Management API (iam.) during cosmos project creation
 
         Args:
             cosmos_name (str): Cosmos Name
