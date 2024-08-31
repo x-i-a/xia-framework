@@ -63,6 +63,7 @@ class Application(Base):
 
     def cmd_destroy(self, args):
         self.prepare(env_name=args.env_name, skip_terraform=True)
+        self.terraform_init(env=args.env_name)
         self.terraform_destroy(env=args.env_name, auto_approve=args.auto_approve)
 
 

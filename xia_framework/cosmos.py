@@ -99,6 +99,7 @@ class Cosmos(Application):
 
     def cmd_destroy(self, args):
         self.prepare(env_name=self.BASE_ENV, skip_terraform=True)
+        self.terraform_init(env=self.BASE_ENV)
         self.terraform_destroy(env=self.BASE_ENV, auto_approve=args.auto_approve)
 
 
