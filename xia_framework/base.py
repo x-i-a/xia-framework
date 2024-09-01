@@ -76,12 +76,11 @@ class Base:
             with open(self.module_yaml, 'w') as module_file:
                 self.yaml.dump(module_dict, module_file)
 
-    def activate_module(self, module_uri: str, activate_scope: list = None, depends_on: list = None):
+    def activate_module(self, module_uri: str, depends_on: list = None):
         """activate a module
 
         Args:
             module_uri (str): Module name as format <package_name>@<version>/<module_name>
-            activate_scope (list): Activation Scope
             depends_on (list): Model dependency
         """
         package_name, version, module_name = self._parse_module_uri(module_uri=module_uri)
@@ -95,10 +94,12 @@ class Base:
                 subprocess.run(['pip', 'install', package_address], check=True)
         module_dict[module_name] = {"package": package_name, "events": {"activate": None}}
         module_config = module_dict[module_name]
-        if activate_scope:
-            module_config["activate_scope"] = activate_scope
-        if depends_on:
-            module_config["depends_on"] = activate_scope
+        module_obj = importlib.import_module(module_config["package"].replace("-", "_"))
+        module_class_name = getattr(module_obj, "modules", {}).get(module_name)
+        module_class = getattr(module_obj, module_class_name)
+        module_instance = module_class()
+        if "depends_on" not in module_config and (depends_on is not None or module_instance.activate_depends):
+            module_config["depends_on"] = depends_on if depends_on else module_instance.activate_depends
         if new_module:
             # All goes well, should be safe to save the modified module configuration
             with open(self.package_yaml, 'r') as package_file:
