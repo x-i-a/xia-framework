@@ -25,7 +25,7 @@ class GcpSingularity:
         # Step 1: Get billing account
         get_billing_cmd = f"gcloud billing accounts list --filter='open=true' --format='value(ACCOUNT_ID)' --limit=1"
         r = subprocess.run(get_billing_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
-        billing_account = r.stdout if "ERROR" not in r.stderr else None
+        billing_account = r.stdout.strip() if "ERROR" not in r.stderr else None
         if not billing_account:
             raise ValueError("No billing account detected, Bigbang won't be successful")
         print(f"GCP Billing Account detected: {billing_account}")
