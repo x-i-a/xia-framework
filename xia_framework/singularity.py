@@ -47,7 +47,9 @@ class GcpSingularity:
             else:
                 raise Exception(r.stderr)
         # Step 3: Create Bucket for saving terraform state files
-        create_bucket_cmd = f"gcloud storage buckets create {cosmos_bucket_name} --location {cosmos_bucket_region}"
+        create_bucket_cmd = (f"gcloud storage buckets create {cosmos_bucket_name} "
+                             f"--location {cosmos_bucket_region}"
+                             f"--project {cosmos_project}")
         r = subprocess.run(create_bucket_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
         if "ERROR" not in r.stderr:
             print(f"Cosmos Bucket {cosmos_bucket_name} created successfully in {cosmos_bucket_region}")
