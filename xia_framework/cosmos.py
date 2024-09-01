@@ -30,7 +30,7 @@ class Cosmos(Application):
             raise ValueError(f"Topology {topology_type} is not among {list(self.topology_dict)}")
 
         for singularity in self.topology_dict[topology_type]:
-            singularity.bigbang(**landscape_dict["topology"])
+            singularity.bigbang(**landscape_dict["settings"])
 
     def terraform_get_state_file_prefix(self, env_name: str = None):
         return f"_/terraform/state"

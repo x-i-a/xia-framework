@@ -13,13 +13,13 @@ class Singularity:
 
 class GcpSingularity:
     @classmethod
-    def bigbang(cls, cosmos_project: str, cosmos_bucket_name: str, cosmos_bucket_region: str, **kwargs):
+    def bigbang(cls, cosmos_project: str, bucket_name: str, bucket_region: str, **kwargs):
         """GCP Bigbang. Handle project will be defined and Terraform will be saved in the given bucket
 
         Args:
             cosmos_project: cosmos project to be created
-            cosmos_bucket_name: state file of the cosmos to be saved in this bucket
-            cosmos_bucket_region: bucket should be located in this region
+            bucket_name: state file of the cosmos to be saved in this bucket
+            bucket_region: bucket should be located in this region
 
         """
         # Step 1: Get billing account
@@ -60,13 +60,13 @@ class GcpSingularity:
             else:
                 raise Exception(r.stderr)
         # Step 3: Create Bucket for saving terraform state files
-        create_bucket_cmd = (f"gcloud storage buckets create gs://{cosmos_bucket_name} "
-                             f"--location {cosmos_bucket_region} "
+        create_bucket_cmd = (f"gcloud storage buckets create gs://{bucket_name} "
+                             f"--location {bucket_region} "
                              f"--project {cosmos_project} ")
         r = subprocess.run(create_bucket_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
         if "ERROR" not in r.stderr:
-            print(f"Cosmos Bucket {cosmos_bucket_name} created successfully in {cosmos_bucket_region}")
+            print(f"Cosmos Bucket {bucket_name} created successfully in {bucket_region}")
         elif "you already own it" in r.stderr:
-            print(f"Cosmos Bucket {cosmos_bucket_name} already exists, skip")
+            print(f"Cosmos Bucket {bucket_name} already exists, skip")
         else:
             raise Exception(r.stderr)
