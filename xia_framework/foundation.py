@@ -73,7 +73,7 @@ class Foundation(Application):
             module_dict = self.yaml.load(module_file) or {}
         with open(self.application_yaml, 'r') as app_file:
             app_dict = self.yaml.load(app_file) or {}
-        if app_name not in app_dict:
+        if app_name in app_dict:
             raise ValueError(f"Application {app_name} already exists")
         params = {"visibility": visibility, "repository_owner": repository_owner, "repository_name": repository_name,
                   "template_owner": template_owner, "template_name": template_name}
