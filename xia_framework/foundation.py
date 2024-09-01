@@ -78,6 +78,7 @@ class Foundation(Application):
         params = {"visibility": visibility, "repository_owner": repository_owner, "repository_name": repository_name,
                   "template_owner": template_owner, "template_name": template_name}
         app_dict[app_name] = {k: v for k, v in params.items() if v}  # Removing None Value
+        app_dict[app_name] = app_dict[app_name] if app_dict[app_name] else None  # Put None value
         module_changed = False
         for module_name in module_list:
             if module_name not in module_dict:
