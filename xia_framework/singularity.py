@@ -67,6 +67,6 @@ class GcpSingularity:
         if "ERROR" not in r.stderr:
             print(f"Cosmos Bucket {cosmos_bucket_name} created successfully in {cosmos_bucket_region}")
         elif "HTTPError 409" in r.stderr:
-            print(f"Cosmos Bucket {cosmos_bucket_name} already exists, nothing to do")
+            print(f"Cosmos Bucket {cosmos_bucket_name} already exists, skip")
         else:
             raise Exception(r.stderr)
