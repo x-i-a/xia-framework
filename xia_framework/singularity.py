@@ -66,7 +66,7 @@ class GcpSingularity:
         r = subprocess.run(create_bucket_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
         if "ERROR" not in r.stderr:
             print(f"Cosmos Bucket {cosmos_bucket_name} created successfully in {cosmos_bucket_region}")
-        elif "HTTPError 409" in r.stderr:
+        elif "HTTPError 409" in str(r.stderr):
             print(f"Cosmos Bucket {cosmos_bucket_name} already exists, skip")
         else:
             raise Exception(r.stderr)
