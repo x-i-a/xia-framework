@@ -131,7 +131,7 @@ class Foundation(Application):
         self.activate_module(module_uri=args.module_uri)
 
     def cmd_create_app(self, args):
-        module_list = [] if not args.modules else args.modules.split(" ")
+        module_list = [] if not args.modules else args.modules.split(",")
         self.create_app(app_name=args.app_name, module_list=module_list, visibility=args.visibility,
                         repository_owner=args.repository_owner, repository_name=args.repository_name,
                         template_owner=args.template_owner, template_name=args.template_name)
