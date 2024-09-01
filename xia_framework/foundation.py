@@ -103,7 +103,7 @@ class Foundation(Application):
 
     @classmethod
     def cli_create_app(cls, subparsers):
-        sub_parser = subparsers.add_parser('create_app',
+        sub_parser = subparsers.add_parser('create-app',
                                            help='Creation of a new application')
         sub_parser.add_argument('-n', '--app-name', type=str, help='Application Name')
         sub_parser.add_argument('-m', '--modules', type=str, help='Needed module list for application')
