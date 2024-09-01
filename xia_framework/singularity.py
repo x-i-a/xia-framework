@@ -22,12 +22,14 @@ class GcpSingularity:
             cosmos_bucket_region: bucket should be located in this region
 
         """
-        # Step 0: Get billing account
+        # Step 1: Get billing account
         get_billing_cmd = f"gcloud billing accounts list --filter='open=true' --format='value(ACCOUNT_ID)' --limit=1"
         r = subprocess.run(get_billing_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
         billing_account = r.stdout if "ERROR" not in r.stderr else None
+        if not billing_account:
+            raise ValueError("No billing account detected, Bigbang won't be successful")
         print(f"GCP Billing Account detected: {billing_account}")
-        # Step 1: Create project
+        # Step 2: Create project
         check_project_cmd = f"gcloud projects list --filter='{cosmos_project}' --format='value(projectId)'"
         r = subprocess.run(check_project_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
         if cosmos_project in r.stdout:
@@ -39,7 +41,17 @@ class GcpSingularity:
                 print(f"Cosmos Project {cosmos_project} created successfully")
             else:
                 raise Exception(r.stderr)
-        # Step 2: Activate API services
+        # Step 3: Link project to billing account
+        check_billing_cmd = f"gcloud billing projects describe {cosmos_project} --format='value(billingEnabled)'"
+        r = subprocess.run(check_billing_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
+        if "true" not in str(r.stdout).lower():
+            link_billing_cmd = f"gcloud billing projects link {cosmos_project} --billing-account={billing_account}"
+            r = subprocess.run(link_billing_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
+            if "ERROR" not in r.stderr:
+                print(f"Billing Account {billing_account} linked successfully in Cosmos Project {cosmos_project}")
+            else:
+                raise Exception(r.stderr)
+        # Step : Activate API services
         for service in ["cloudresourcemanager", "iam", "cloudbilling", "storage"]:
             enable_api_cmd = f"gcloud services enable {service}.googleapis.com --project {cosmos_project}"
             r = subprocess.run(enable_api_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
