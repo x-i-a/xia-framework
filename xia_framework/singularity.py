@@ -30,7 +30,7 @@ class GcpSingularity:
         check_project_cmd = f"gcloud projects list --filter='{cosmos_project}' --format='value(projectId)'"
         r = subprocess.run(check_project_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
         if cosmos_project in r.stdout:
-            raise ValueError(f"Cosmos Project {cosmos_project} already exists")
+            print(f"Cosmos Project {cosmos_project} already exists, skip")
         else:
             create_proj_cmd = f"gcloud projects create {cosmos_project} --name='{cosmos_project}'"
             r = subprocess.run(create_proj_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
@@ -40,7 +40,7 @@ class GcpSingularity:
                 raise Exception(r.stderr)
         # Step 2: Activate API services
         for service in ["cloudresourcemanager", "iam", "cloudbilling", "storage"]:
-            enable_api_cmd = f"gcloud services enable {service}.googleapis.com"
+            enable_api_cmd = f"gcloud services enable {service}.googleapis.com --project {cosmos_project}"
             r = subprocess.run(enable_api_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
             if "ERROR" not in r.stderr:
                 print(f"Service {service} enabled successfully in Cosmos Project {cosmos_project}")
