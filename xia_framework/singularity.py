@@ -22,10 +22,11 @@ class GcpSingularity:
             cosmos_bucket_region: bucket should be located in this region
 
         """
-        # get_billing_cmd = f"gcloud billing accounts list --filter='open=true' --format='value(ACCOUNT_ID)' --limit=1"
-        # r = subprocess.run(get_billing_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
-        # billing_account = r.stdout if "ERROR" not in r.stderr else None
-        # print(f"GCP Billing Account detected: {billing_account}")
+        # Step 0: Get billing account
+        get_billing_cmd = f"gcloud billing accounts list --filter='open=true' --format='value(ACCOUNT_ID)' --limit=1"
+        r = subprocess.run(get_billing_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
+        billing_account = r.stdout if "ERROR" not in r.stderr else None
+        print(f"GCP Billing Account detected: {billing_account}")
         # Step 1: Create project
         check_project_cmd = f"gcloud projects list --filter='{cosmos_project}' --format='value(projectId)'"
         r = subprocess.run(check_project_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
@@ -48,8 +49,8 @@ class GcpSingularity:
                 raise Exception(r.stderr)
         # Step 3: Create Bucket for saving terraform state files
         create_bucket_cmd = (f"gcloud storage buckets create {cosmos_bucket_name} "
-                             f"--location {cosmos_bucket_region}"
-                             f"--project {cosmos_project}")
+                             f"--location {cosmos_bucket_region} "
+                             f"--project {cosmos_project} ")
         r = subprocess.run(create_bucket_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
         if "ERROR" not in r.stderr:
             print(f"Cosmos Bucket {cosmos_bucket_name} created successfully in {cosmos_bucket_region}")
