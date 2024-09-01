@@ -80,8 +80,8 @@ class Foundation(Application):
         app_dict[app_name] = {k: v for k, v in params.items() if v}  # Removing None Value
         module_changed = False
         for module_name in module_list:
-            if "activate" not in module_dict.get(module_name, {}).get("events", {}):
-                raise ValueError(f"Module {module_name} is not activated yet")
+            if module_name not in module_dict:
+                raise ValueError(f"Module {module_name} is not presented yet")
             if "activate_scope" in module_dict[module_name]:
                 module_dict[module_name]["activate_scope"].append(app_name)
             else:
