@@ -8,8 +8,10 @@ from xia_framework.application import Application
 class Foundation(Application):
     def __init__(self, config_dir: str = "config", **kwargs):
         super().__init__(config_dir=config_dir, **kwargs)
+        self.application_yaml = os.path.sep.join([self.config_dir, "applications.yaml"])
         self.run_book.update({
             "activate-module": {"cli": self.cli_activate_module, "run": self.cmd_activate_module},
+            "create-app": {"cli": self.cli_create_app, "run": self.cmd_create_app}
         })
 
     def create_backend(self, foundation_name: str):
@@ -40,20 +42,6 @@ class Foundation(Application):
             else:
                 print(r.stderr)
 
-    def birth(self, foundation_name: str):
-        """Creation of a foundation
-
-        Args:
-            foundation_name: name of foundation
-        """
-        self.create_backend(foundation_name)
-        # self.terraform_init('prd')
-        # self.register_module("gcp-module-project", "Project")
-        # self.register_module("gcp-module-application", "Application")
-        # self.update_requirements()
-        # self.install_requirements()
-        # self.enable_modules()
-
     def terraform_get_state_file_prefix(self, env_name: str = None):
         with open(self.landscape_yaml, 'r') as file:
             landscape_dict = yaml.safe_load(file) or {}
@@ -78,8 +66,33 @@ class Foundation(Application):
         with open(self.module_yaml, 'w') as file:
             yaml.dump(module_dict, file, default_flow_style=False, sort_keys=False)
 
-    def create_app(self, app_name: str):
-        print(f"Creating application: {app_name}")
+    def create_app(self, app_name: str, module_list: list, visibility: str = None,
+                   repository_owner: str = None, repository_name: str = None,
+                   template_owner: str = None, template_name: str = None):
+        with open(self.module_yaml, 'r') as module_file:
+            module_dict = self.yaml.load(module_file) or {}
+        with open(self.application_yaml, 'r') as app_file:
+            app_dict = self.yaml.load(app_file) or {}
+        if app_name not in app_dict:
+            raise ValueError(f"Application {app_name} already exists")
+        params = {"visibility": visibility, "repository_owner": repository_owner, "repository_name": repository_name,
+                  "template_owner": template_owner, "template_name": template_name}
+        app_dict[app_name] = {k: v for k, v in params.items() if v}  # Removing None Value
+        module_changed = False
+        for module_name in module_list:
+            if "activate" not in module_dict.get(module_name, {}).get("events", {}):
+                raise ValueError(f"Module {module_name} is not activated yet")
+            if "activate_scope" in module_dict[module_name]:
+                module_dict[module_name]["activate_scope"].append(app_name)
+            else:
+                module_dict[module_name]["activate_scope"] = [app_name]
+            module_changed = True
+        # Save results
+        if module_changed:
+            with open(self.module_yaml, 'w') as module_file:
+                self.yaml.dump(module_dict, module_file)
+        with open(self.application_yaml, 'w') as app_file:
+            self.yaml.dump(app_dict, app_file)
 
     @classmethod
     def cli_activate_module(cls, subparsers):
@@ -87,6 +100,18 @@ class Foundation(Application):
                                            help='Activation of a new module to be used in foundation')
         sub_parser.add_argument('-n', '--module-uri', type=str,
                                 help='Module name to be activated in format: <package_name>@<version>/<module_name>')
+
+    @classmethod
+    def cli_create_app(cls, subparsers):
+        sub_parser = subparsers.add_parser('create_app',
+                                           help='Creation of a new application')
+        sub_parser.add_argument('-n', '--app-name', type=str, help='Application Name')
+        sub_parser.add_argument('-m', '--modules', type=str, help='Needed module list for application')
+        sub_parser.add_argument('-v', '--visibility', type=str, help='Application Visibility')
+        sub_parser.add_argument('--repository-owner', type=str, help='Application Repository Owner')
+        sub_parser.add_argument('--repository-name', type=str, help='Application Repository Name')
+        sub_parser.add_argument('--template-owner', type=str, help='Template Owner')
+        sub_parser.add_argument('--template-name', type=str, help='Template Name')
 
     @classmethod
     def cli_plan(cls, subparsers):
@@ -104,6 +129,12 @@ class Foundation(Application):
 
     def cmd_activate_module(self, args):
         self.activate_module(module_uri=args.module_uri)
+
+    def cmd_create_app(self, args):
+        module_list = [] if not args.modules else args.modules.split(" ")
+        self.create_app(app_name=args.app_name, module_list=module_list, visibility=args.visibility,
+                        repository_owner=args.repository_owner, repository_name=args.repository_name,
+                        template_owner=args.template_owner, template_name=args.template_name)
 
     def cmd_plan(self, args):
         return self.prepare(env_name=self.BASE_ENV, skip_terraform=True)
