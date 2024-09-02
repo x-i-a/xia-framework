@@ -21,6 +21,7 @@ class Base:
         self.landscape_yaml = os.path.sep.join([self.config_dir, "landscape.yaml"])
         self.module_yaml = os.path.sep.join([self.config_dir, "modules.yaml"])
         self.package_yaml = os.path.sep.join([self.config_dir, "packages.yaml"])
+        self.tfstate_yaml = os.path.sep.join([self.config_dir, "core", "tfstate.yaml"])
 
         # Temporary files
         self.requirements_txt = os.path.sep.join([self.config_dir, "requirements.txt"])

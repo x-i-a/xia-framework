@@ -18,16 +18,15 @@ class Application(Base):
         })
 
     @classmethod
-    def _config_replace(cls, lines: list, replace_dict: dict):
+    def _config_replace(cls, file_path: str, replace_dict: dict):
         """Configuration file line replace
 
         Args:
-            lines: line list of configuration file
+            file_path: file path of the file to be replaced
             replace_dict: replacement dictionary (example {"key:", "key: value"})
-
-        Returns:
-            replaced key value
         """
+        with open(file_path) as landscape_file:
+            lines = landscape_file.readlines()
         new_lines = []
         for line in lines:
             stripped_line = line.strip()
@@ -43,7 +42,8 @@ class Application(Base):
                     break
             if not key_word_found:
                 new_lines.append(line)
-        return new_lines
+        with open(file_path, "w") as landscape_file:
+            landscape_file.writelines(new_lines)
 
     def init_config(self):
         replace_dict = {
@@ -52,11 +52,7 @@ class Application(Base):
             "foundation_name:": f"  foundation_name: {CliGH.get_gh_action_var('foundation_name')}\n",
             "application_name:": f"  application_name: {CliGH.get_gh_action_var('app_name')}\n",
         }
-        with open(self.landscape_yaml) as landscape_file:
-            lines = landscape_file.readlines()
-        new_lines = self._config_replace(lines, replace_dict)
-        with open(self.landscape_yaml, "w") as landscape_file:
-            landscape_file.writelines(new_lines)
+        self._config_replace(self.landscape_yaml, replace_dict)
 
     def terraform_get_state_file_prefix(self, env_name: str = None):
         with open(self.landscape_yaml, 'r') as file:
