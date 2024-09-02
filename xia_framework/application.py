@@ -68,7 +68,7 @@ class Application(Base):
             gcp_replace_dict = {
                 "project_prefix:": f"project_prefix: {gcp_project_prefix}\n",
             }
-            gcp_file_path = os.path.sep.join([self.config_dir, "core", "tfstate.yaml"])
+            gcp_file_path = os.path.sep.join([self.config_dir, "platform", "gcp-project.yaml"])
             self._config_replace(gcp_file_path, gcp_replace_dict)
 
     def terraform_get_state_file_prefix(self, env_name: str = None):
