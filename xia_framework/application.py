@@ -36,10 +36,9 @@ class Application(Base):
                 continue
             stripped_line = stripped_line[1:].strip()
             key_word_found = False
-            print(stripped_line)
             for key_word, new_content in replace_dict.items():
                 if stripped_line.startswith(key_word):
-                    new_lines.append(line)
+                    new_lines.append(new_content)
                     key_word_found = True
                     break
             if not key_word_found:
