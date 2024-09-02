@@ -36,6 +36,7 @@ class Application(Base):
                 continue
             stripped_line = stripped_line[1:].strip()
             key_word_found = False
+            print(stripped_line)
             for key_word, new_content in replace_dict.items():
                 if stripped_line.startswith(key_word):
                     new_lines.append(line)
@@ -53,7 +54,6 @@ class Application(Base):
         }
         with open(self.landscape_yaml) as landscape_file:
             lines = landscape_file.readlines()
-        print(lines)
         new_lines = self._config_replace(lines, replace_dict)
         with open(self.landscape_yaml, "w") as landscape_file:
             landscape_file.writelines(new_lines)
