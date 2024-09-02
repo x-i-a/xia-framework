@@ -3,6 +3,7 @@ import argparse
 import subprocess
 import yaml
 from xia_framework.application import Application
+from xia_framework.tools import CliGH
 
 
 class Foundation(Application):
@@ -13,6 +14,14 @@ class Foundation(Application):
             "activate-module": {"cli": self.cli_activate_module, "run": self.cmd_activate_module},
             "create-app": {"cli": self.cli_create_app, "run": self.cmd_create_app}
         })
+
+    def init_config(self):
+        landscape_replace_dict = {
+            "cosmos_name:": f"  cosmos_name: {CliGH.get_gh_action_var('cosmos_name')}\n",
+            "realm_name:": f"  realm_name: {CliGH.get_gh_action_var('realm_name')}\n",
+            "foundation_name:": f"  foundation_name: {CliGH.get_gh_action_var('foundation_name')}\n",
+        }
+        self._config_replace(self.landscape_yaml, landscape_replace_dict)
 
     def create_backend(self, foundation_name: str):
         with open(self.landscape_yaml, 'r') as file:

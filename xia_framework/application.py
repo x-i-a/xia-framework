@@ -18,36 +18,6 @@ class Application(Base):
             "destroy": {"cli": self.cli_destroy, "run": self.cmd_destroy},
         })
 
-    @classmethod
-    def _config_replace(cls, file_path: str, replace_dict: dict):
-        """Configuration file line replace
-
-        Args:
-            file_path: file path of the file to be replaced
-            replace_dict: replacement dictionary (example {"key:", "key: value"})
-        """
-        if not os.path.isfile(file_path):
-            print(f"File {file_path} doesn't exist, skip")
-        with open(file_path) as landscape_file:
-            lines = landscape_file.readlines()
-        new_lines = []
-        for line in lines:
-            stripped_line = line.strip()
-            if not stripped_line.startswith("#"):
-                new_lines.append(line)
-                continue
-            stripped_line = stripped_line[1:].strip()
-            key_word_found = False
-            for key_word, new_content in replace_dict.items():
-                if stripped_line.startswith(key_word):
-                    new_lines.append(new_content)
-                    key_word_found = True
-                    break
-            if not key_word_found:
-                new_lines.append(line)
-        with open(file_path, "w") as landscape_file:
-            landscape_file.writelines(new_lines)
-
     def init_config(self):
         landscape_replace_dict = {
             "cosmos_name:": f"  cosmos_name: {CliGH.get_gh_action_var('cosmos_name')}\n",
