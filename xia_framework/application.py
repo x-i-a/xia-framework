@@ -47,9 +47,10 @@ class Application(Base):
 
     def init_config(self):
         replace_dict = {
-            "cosmos_name:": f"  cosmos_name: {CliGH.get_gh_action_var('cosmos_name')}",
-            "realm_name:": f"  realm_name: {CliGH.get_gh_action_var('realm_name')}",
-            "foundation_name:": f"  foundation_name: {CliGH.get_gh_action_var('foundation_name')}",
+            "cosmos_name:": f"  cosmos_name: {CliGH.get_gh_action_var('cosmos_name')}\n",
+            "realm_name:": f"  realm_name: {CliGH.get_gh_action_var('realm_name')}\n",
+            "foundation_name:": f"  foundation_name: {CliGH.get_gh_action_var('foundation_name')}\n",
+            "application_name:": f"  application_name: {CliGH.get_gh_action_var('app_name')}\n",
         }
         with open(self.landscape_yaml) as landscape_file:
             lines = landscape_file.readlines()
