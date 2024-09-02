@@ -1,6 +1,7 @@
 import argparse
 import subprocess
 import importlib
+import os
 import yaml
 from xia_framework.base import Base
 from xia_framework.tools import CliGH
@@ -25,6 +26,8 @@ class Application(Base):
             file_path: file path of the file to be replaced
             replace_dict: replacement dictionary (example {"key:", "key: value"})
         """
+        if not os.path.isfile(file_path):
+            print(f"File {file_path} doesn't exist, skip")
         with open(file_path) as landscape_file:
             lines = landscape_file.readlines()
         new_lines = []
@@ -46,13 +49,19 @@ class Application(Base):
             landscape_file.writelines(new_lines)
 
     def init_config(self):
-        replace_dict = {
+        landscape_replace_dict = {
             "cosmos_name:": f"  cosmos_name: {CliGH.get_gh_action_var('cosmos_name')}\n",
             "realm_name:": f"  realm_name: {CliGH.get_gh_action_var('realm_name')}\n",
             "foundation_name:": f"  foundation_name: {CliGH.get_gh_action_var('foundation_name')}\n",
             "application_name:": f"  application_name: {CliGH.get_gh_action_var('app_name')}\n",
         }
-        self._config_replace(self.landscape_yaml, replace_dict)
+        self._config_replace(self.landscape_yaml, landscape_replace_dict)
+        tfstate_replace_dict = {
+            "tf_bucket:": f"tf_bucket: {CliGH.get_gh_action_var('tf_bucket_name')}\n",
+        }
+        tfstate_file_path = os.path.sep.join([self.config_dir, "core", "tfstate.yaml"])
+        self._config_replace(tfstate_file_path, tfstate_replace_dict)
+
 
     def terraform_get_state_file_prefix(self, env_name: str = None):
         with open(self.landscape_yaml, 'r') as file:
