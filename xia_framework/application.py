@@ -53,6 +53,7 @@ class Application(Base):
         }
         with open(self.landscape_yaml) as landscape_file:
             lines = landscape_file.readlines()
+        print(lines)
         new_lines = self._config_replace(lines, replace_dict)
         with open(self.landscape_yaml, "w") as landscape_file:
             landscape_file.writelines(new_lines)
