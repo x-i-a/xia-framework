@@ -3,6 +3,7 @@ import subprocess
 import importlib
 import yaml
 from xia_framework.base import Base
+from xia_framework.tools import CliGH
 
 
 class Application(Base):
@@ -16,8 +17,45 @@ class Application(Base):
             "destroy": {"cli": self.cli_destroy, "run": self.cmd_destroy},
         })
 
+    @classmethod
+    def _config_replace(cls, lines: list, replace_dict: dict):
+        """Configuration file line replace
+
+        Args:
+            lines: line list of configuration file
+            replace_dict: replacement dictionary (example {"key:", "key: value"})
+
+        Returns:
+            replaced key value
+        """
+        new_lines = []
+        for line in lines:
+            stripped_line = line.strip()
+            if not stripped_line.startswith("#"):
+                new_lines.append(line)
+                continue
+            stripped_line = stripped_line[1:].strip()
+            key_word_found = False
+            for key_word, new_content in replace_dict.items():
+                if stripped_line.startswith(key_word):
+                    new_lines.append(line)
+                    key_word_found = True
+                    break
+            if not key_word_found:
+                new_lines.append(line)
+        return new_lines
+
     def init_config(self):
-        print()
+        replace_dict = {
+            "cosmos_name:": f"  cosmos_name: {CliGH.get_gh_action_var('cosmos_name')}",
+            "realm_name:": f"  realm_name: {CliGH.get_gh_action_var('realm_name')}",
+            "foundation_name:": f"  foundation_name: {CliGH.get_gh_action_var('foundation_name')}",
+        }
+        with open(self.landscape_yaml) as landscape_file:
+            lines = landscape_file.readlines()
+        new_lines = self._config_replace(lines, replace_dict)
+        with open(self.landscape_yaml, "w") as landscape_file:
+            landscape_file.writelines(new_lines)
 
     def terraform_get_state_file_prefix(self, env_name: str = None):
         with open(self.landscape_yaml, 'r') as file:
