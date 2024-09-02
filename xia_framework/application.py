@@ -9,11 +9,15 @@ class Application(Base):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.run_book.update({
+            "init-config": {"cli": self.cli_init_config, "run": self.cmd_init_config},
             "init-module": {"cli": self.cli_init_module, "run": self.cmd_init_module},
             "plan": {"cli": self.cli_plan, "run": self.cmd_plan},
             "apply": {"cli": self.cli_apply, "run": self.cmd_apply},
             "destroy": {"cli": self.cli_destroy, "run": self.cmd_destroy},
         })
+
+    def init_config(self):
+        print()
 
     def terraform_get_state_file_prefix(self, env_name: str = None):
         with open(self.landscape_yaml, 'r') as file:
@@ -26,6 +30,10 @@ class Application(Base):
         foundation_name = current_settings["foundation_name"]
         application_name = current_settings["application_name"]
         return f"{realm_name}/_/{foundation_name}/{application_name}/{env_name}/terraform/state"
+
+    @classmethod
+    def cli_init_config(cls, subparsers):
+        subparsers.add_parser('init-config', help='Initialization of configuration')
 
     @classmethod
     def cli_init_module(cls, subparsers):
@@ -49,6 +57,9 @@ class Application(Base):
         sub_parser = subparsers.add_parser('destroy', help=f'Prepare {cls.__name__} Deploy time objects')
         sub_parser.add_argument('-e', '--env_name', type=str, help='Environment Name')
         sub_parser.add_argument('-y', '--auto-approve', type=str, help='Approve destroy automatically')
+
+    def cmd_init_config(self, args):
+        return self.init_config()
 
     def cmd_init_module(self, args):
         return self.init_module(module_uri=args.module_uri)

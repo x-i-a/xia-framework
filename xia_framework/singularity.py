@@ -1,4 +1,5 @@
 import subprocess
+from xia_framework.tools import CliGCloud
 
 
 class Singularity:
@@ -23,50 +24,16 @@ class GcpSingularity:
 
         """
         # Step 1: Get billing account
-        get_billing_cmd = f"gcloud billing accounts list --filter='open=true' --format='value(ACCOUNT_ID)' --limit=1"
-        r = subprocess.run(get_billing_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
-        billing_account = r.stdout.strip() if "ERROR" not in r.stderr else None
+        billing_account = CliGCloud.get_gcp_billing_account()
         if not billing_account:
             raise ValueError("No billing account detected, Bigbang won't be successful")
         print(f"GCP Billing Account detected: {billing_account}")
         # Step 2: Create project
-        check_project_cmd = f"gcloud projects list --filter='{cosmos_project}' --format='value(projectId)'"
-        r = subprocess.run(check_project_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
-        if cosmos_project in r.stdout:
-            print(f"Cosmos Project {cosmos_project} already exists, skip")
-        else:
-            create_proj_cmd = f"gcloud projects create {cosmos_project} --name='{cosmos_project}'"
-            r = subprocess.run(create_proj_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
-            if "ERROR" not in r.stderr:
-                print(f"Cosmos Project {cosmos_project} created successfully")
-            else:
-                raise Exception(r.stderr)
+        CliGCloud.create_gcp_project(cosmos_project)
         # Step 3: Link project to billing account
-        check_billing_cmd = f"gcloud billing projects describe {cosmos_project} --format='value(billingEnabled)'"
-        r = subprocess.run(check_billing_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
-        if "true" not in str(r.stdout).lower():
-            link_billing_cmd = f"gcloud billing projects link {cosmos_project} --billing-account={billing_account}"
-            r = subprocess.run(link_billing_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
-            if "ERROR" not in r.stderr:
-                print(f"Billing Account {billing_account} linked successfully in Cosmos Project {cosmos_project}")
-            else:
-                raise Exception(r.stderr)
-        # Step : Activate API services
+        CliGCloud.link_gcp_billing_project(cosmos_project, billing_account)
+        # Step 4: Activate API services
         for service in ["cloudresourcemanager", "iam", "cloudbilling", "storage"]:
-            enable_api_cmd = f"gcloud services enable {service}.googleapis.com --project {cosmos_project}"
-            r = subprocess.run(enable_api_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
-            if "ERROR" not in r.stderr:
-                print(f"Service {service} enabled successfully in Cosmos Project {cosmos_project}")
-            else:
-                raise Exception(r.stderr)
-        # Step 3: Create Bucket for saving terraform state files
-        create_bucket_cmd = (f"gcloud storage buckets create gs://{bucket_name} "
-                             f"--location {bucket_region} "
-                             f"--project {cosmos_project} ")
-        r = subprocess.run(create_bucket_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
-        if "ERROR" not in r.stderr:
-            print(f"Cosmos Bucket {bucket_name} created successfully in {bucket_region}")
-        elif "you already own it" in r.stderr:
-            print(f"Cosmos Bucket {bucket_name} already exists, skip")
-        else:
-            raise Exception(r.stderr)
+            CliGCloud.activate_gcp_service(cosmos_project, service)
+        # Step 5: Create Bucket for saving terraform state files
+        CliGCloud.create_gcs_bucket(cosmos_project, bucket_name, bucket_region)
