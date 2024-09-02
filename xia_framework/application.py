@@ -56,12 +56,20 @@ class Application(Base):
             "application_name:": f"  application_name: {CliGH.get_gh_action_var('app_name')}\n",
         }
         self._config_replace(self.landscape_yaml, landscape_replace_dict)
-        tfstate_replace_dict = {
-            "tf_bucket:": f"tf_bucket: {CliGH.get_gh_action_var('tf_bucket_name')}\n",
-        }
-        tfstate_file_path = os.path.sep.join([self.config_dir, "core", "tfstate.yaml"])
-        self._config_replace(tfstate_file_path, tfstate_replace_dict)
-
+        tf_bucket_name = CliGH.get_gh_action_var('tf_bucket_name')
+        if tf_bucket_name:
+            tfstate_replace_dict = {
+                "tf_bucket:": f"tf_bucket: {tf_bucket_name}\n",
+            }
+            tfstate_file_path = os.path.sep.join([self.config_dir, "core", "tfstate.yaml"])
+            self._config_replace(tfstate_file_path, tfstate_replace_dict)
+        gcp_project_prefix = CliGH.get_gh_action_var('gcp_project_prefix')
+        if gcp_project_prefix:
+            gcp_replace_dict = {
+                "project_prefix:": f"project_prefix: {gcp_project_prefix}\n",
+            }
+            gcp_file_path = os.path.sep.join([self.config_dir, "core", "tfstate.yaml"])
+            self._config_replace(gcp_file_path, gcp_replace_dict)
 
     def terraform_get_state_file_prefix(self, env_name: str = None):
         with open(self.landscape_yaml, 'r') as file:
