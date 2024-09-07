@@ -41,7 +41,7 @@ class CliGCloud:
     @classmethod
     def create_gcs_bucket(cls, project_name: str, bucket_name: str, bucket_region: str):
         create_bucket_cmd = (f"gcloud storage buckets create gs://{bucket_name} "
-                             f"--uniform-bucket-level-access"
+                             f"--uniform-bucket-level-access "
                              f"--location {bucket_region} "
                              f"--project {project_name} ")
         r = subprocess.run(create_bucket_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
