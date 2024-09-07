@@ -27,11 +27,14 @@ class GcpSingularity:
     @classmethod
     def get_inputs(cls, input_dict: dict):
         if "cosmos_project" not in input_dict:
-            input_dict["cosmos_project"] = input("Enter GCP Cosmos Project Name: ")
+            default = input_dict['cosmos_name']
+            input_dict["cosmos_project"] = input(f"Enter GCP Cosmos Project Name [{default}]: ") or default
         if "bucket_name" not in input_dict:
-            input_dict["bucket_name"] = input("Enter Terraform bucket Name: ")
+            default = input_dict['cosmos_name']
+            input_dict["bucket_name"] = input(f"Enter Terraform bucket Name [{default}]: ") or default
         if "bucket_region" not in input_dict:
-            input_dict["bucket_region"] = input("Enter Terraform bucket Region: ")
+            default = "eu"
+            input_dict["bucket_region"] = input(f"Enter Terraform bucket Region [{default}]: ") or default
 
         return input_dict
 
