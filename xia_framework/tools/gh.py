@@ -1,3 +1,4 @@
+import json
 import subprocess
 
 
@@ -10,3 +11,9 @@ class CliGH:
         r = subprocess.run(get_variable_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
         return r.stdout.strip() if "was not found" not in r.stderr else None
 
+    @classmethod
+    def get_gh_owner(cls):
+        get_owner_cmd = "gh repo view --json owner"
+        r = subprocess.run(get_owner_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
+        owner_dict = json.loads(r.stdout)
+        return owner_dict["owner"]["login"]

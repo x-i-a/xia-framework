@@ -22,6 +22,13 @@ class Foundation(Application):
             "foundation_name:": f"  foundation_name: {CliGH.get_gh_action_var('foundation_name')}\n",
         }
         self._config_replace(self.landscape_yaml, landscape_replace_dict)
+        tf_bucket_name = CliGH.get_gh_action_var('tf_bucket_name')
+        if tf_bucket_name:
+            tfstate_replace_dict = {
+                "tf_bucket:": f"tf_bucket: {tf_bucket_name}\n",
+            }
+            tfstate_file_path = os.path.sep.join([self.config_dir, "core", "tfstate.yaml"])
+            self._config_replace(tfstate_file_path, tfstate_replace_dict)
 
     def create_backend(self, foundation_name: str):
         with open(self.landscape_yaml, 'r') as file:
