@@ -39,7 +39,7 @@ class Cosmos(Application):
 
         # Step 1: Define Cosmos Topology
         if "cosmos_name" not in current_settings:
-            current_settings["cosmos_name"] = os.environ.get("COSMOS_NAME")
+            current_settings["cosmos_name"] = os.getenv("COSMOS_NAME")
         assert current_settings["cosmos_name"], "cosmos name shouldn't be empty"
 
         topology_type = (landscape_dict.get("topology", {}) or {}).get("type", None)
