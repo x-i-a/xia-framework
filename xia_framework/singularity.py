@@ -4,6 +4,17 @@ from xia_framework.tools import CliGCloud
 
 class Singularity:
     @classmethod
+    def get_inputs(cls, input_dict: dict) -> dict:
+        """Get needed inputs of Bigbang
+
+        Args:
+            input_dict (dict): Current input dictionary
+
+        Returns:
+            Completed input dict
+        """
+
+    @classmethod
     def bigbang(cls, **kwargs):
         """Bigbang of different topology
 
@@ -14,6 +25,17 @@ class Singularity:
 
 class GcpSingularity:
     @classmethod
+    def get_inputs(cls, input_dict: dict):
+        if "cosmos_project" not in input_dict:
+            input_dict["cosmos_project"] = input("Enter GCP Cosmos Project Name: ")
+        if "bucket_name" not in input_dict:
+            input_dict["bucket_name"] = input("Enter Terraform bucket Name: ")
+        if "bucket_region" not in input_dict:
+            input_dict["bucket_region"] = input("Enter Terraform bucket Region: ")
+
+        return input_dict
+
+    @classmethod
     def bigbang(cls, cosmos_project: str, bucket_name: str, bucket_region: str, **kwargs):
         """GCP Bigbang. Handle project will be defined and Terraform will be saved in the given bucket
 
@@ -22,6 +44,8 @@ class GcpSingularity:
             bucket_name: state file of the cosmos to be saved in this bucket
             bucket_region: bucket should be located in this region
 
+        """
+        print(cosmos_project, bucket_name, bucket_region)
         """
         # Step 1: Get billing account
         billing_account = CliGCloud.get_gcp_billing_account()
@@ -37,3 +61,4 @@ class GcpSingularity:
             CliGCloud.activate_gcp_service(cosmos_project, service)
         # Step 5: Create Bucket for saving terraform state files
         CliGCloud.create_gcs_bucket(cosmos_project, bucket_name, bucket_region)
+        """
