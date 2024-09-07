@@ -36,7 +36,7 @@ class Cosmos(Application):
         with open(self.landscape_yaml, 'r') as file:
             landscape_dict = yaml.safe_load(file) or {}
 
-        topology_type = landscape_dict.get("topology", {}).get("type", None)
+        topology_type = (landscape_dict.get("topology", {}) or {}).get("type", None)
         if not topology_type:
             raise ValueError(f"Please define the topology in config/landscape.yaml")
         if topology_type not in self.topology_dict:
