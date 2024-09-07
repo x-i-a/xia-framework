@@ -4,6 +4,7 @@ import subprocess
 import yaml
 from xia_framework.application import Application
 from xia_framework.singularity import GcpSingularity
+from xia_framework.tools import CliGH
 
 
 class Cosmos(Application):
@@ -16,6 +17,18 @@ class Cosmos(Application):
         self.topology_dict = {
             "gcp": [GcpSingularity]
         }
+
+    def init_config(self):
+        github_owner_name = CliGH.get_gh_owner()
+        landscape_replace_dict = {
+            "default_owner:": f"  default_owner: {github_owner_name}\n",
+        }
+        self._config_replace(self.landscape_yaml, landscape_replace_dict)
+        github_replace_dict = {
+            "github_owner:": f"github_owner: {github_owner_name}\n",
+        }
+        github_file_path = os.path.sep.join([self.config_dir, "core", "github.yaml"])
+        self._config_replace(github_file_path, github_replace_dict)
 
     def bigbang(self):
         """Create the cosmos administration project
