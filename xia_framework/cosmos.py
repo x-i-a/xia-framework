@@ -46,6 +46,10 @@ class Cosmos(Application):
                 print(f"Topology {topology_type} is not among {list(self.topology_dict)}")
                 topology_type = None
 
+        current_settings = landscape_dict["settings"] or {}
+        for singularity in self.topology_dict[topology_type]:
+            current_settings = singularity.get_inputs(input_dict=current_settings)
+
         for singularity in self.topology_dict[topology_type]:
             singularity.bigbang(**landscape_dict["settings"])
 
