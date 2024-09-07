@@ -46,7 +46,7 @@ class Cosmos(Application):
         while not topology_type:
             topology_type = input("Please define cosmos topology: \n"
                                   "gcp: Using GCS Bucket of Google Cloud Platform to save Cosmos state \n"
-                                  "Your choice: \n")
+                                  "Your choice [gcp]: \n") or "gcp"
             if topology_type not in self.topology_dict:
                 print(f"Topology {topology_type} is not among {list(self.topology_dict)}")
                 topology_type = None
