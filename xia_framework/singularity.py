@@ -48,8 +48,6 @@ class GcpSingularity:
             bucket_region: bucket should be located in this region
 
         """
-        print(cosmos_project, bucket_name, bucket_region)
-        """
         # Step 1: Get billing account
         billing_account = CliGCloud.get_gcp_billing_account()
         if not billing_account:
@@ -64,4 +62,3 @@ class GcpSingularity:
             CliGCloud.activate_gcp_service(cosmos_project, service)
         # Step 5: Create Bucket for saving terraform state files
         CliGCloud.create_gcs_bucket(cosmos_project, bucket_name, bucket_region)
-        """
