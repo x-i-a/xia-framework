@@ -52,7 +52,6 @@ class Cosmos(Application):
                 topology_type = None
 
         # Step 2: Get extra Settings
-        current_settings = landscape_dict["settings"]
         for singularity in self.topology_dict[topology_type]:
             current_settings = singularity.get_inputs(input_dict=current_settings)
 
