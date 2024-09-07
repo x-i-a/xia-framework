@@ -35,21 +35,33 @@ class Cosmos(Application):
         """
         with open(self.landscape_yaml, 'r') as file:
             landscape_dict = yaml.safe_load(file) or {}
+        current_settings = landscape_dict["settings"] or {}
+
+        # Step 1: Define Cosmos Topology
+        if "cosmos_name" not in current_settings:
+            current_settings["cosmos_name"] = os.environ.get("COSMOS_NAME")
+        assert current_settings["cosmos_name"], "cosmos name shouldn't be empty"
 
         topology_type = (landscape_dict.get("topology", {}) or {}).get("type", None)
         while not topology_type:
             topology_type = input("Please define cosmos topology: \n"
                                   "gcp: Using GCS Bucket of Google Cloud Platform to save Cosmos state \n"
                                   "Your choice: \n")
-            # raise ValueError(f"Please define the topology in config/landscape.yaml")
             if topology_type not in self.topology_dict:
                 print(f"Topology {topology_type} is not among {list(self.topology_dict)}")
                 topology_type = None
 
-        current_settings = landscape_dict["settings"] or {}
+        # Step 2: Get extra Settings
+        current_settings = landscape_dict["settings"]
         for singularity in self.topology_dict[topology_type]:
             current_settings = singularity.get_inputs(input_dict=current_settings)
 
+        landscape_replace_dict = {
+            key + ":": f"  {key}: {value}\n" for key, value in current_settings.items()
+        }
+        self._config_replace(self.landscape_yaml, landscape_replace_dict)
+
+        # Step 3: Bigbang
         for singularity in self.topology_dict[topology_type]:
             singularity.bigbang(**current_settings)
 
