@@ -22,6 +22,8 @@ class Base:
         self.module_yaml = os.path.sep.join([self.config_dir, "modules.yaml"])
         self.package_yaml = os.path.sep.join([self.config_dir, "packages.yaml"])
 
+        self.tfstate_yaml = os.path.sep.join([self.config_dir, "core", "tfstate.yaml"])
+
         # Temporary files
         self.requirements_txt = os.path.sep.join([self.config_dir, "requirements.txt"])
         self.package_pattern = re.compile(r'^[a-zA-Z0-9_-]+$')
@@ -223,10 +225,9 @@ class Base:
         raise NotImplementedError
 
     def terraform_init(self, env: str):
-        with open(self.landscape_yaml, 'r') as file:
-            landscape_dict = yaml.safe_load(file) or {}
-        current_settings = landscape_dict.get("settings", {})
-        bucket_name = current_settings.get("bucket_name", current_settings["cosmos_name"])
+        with open(self.tfstate_yaml, 'r') as file:
+            tfstate_dict = yaml.safe_load(file) or {}
+        bucket_name = tfstate_dict.get("tf_bucket")
         # bucket_name = current_settings["realm_name"] + "_" + current_settings["foundation_name"]
         tf_init_cmd = (f'terraform -chdir=iac/environments/{env} init '
                        f'-backend-config="bucket={bucket_name}" '
