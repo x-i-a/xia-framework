@@ -49,8 +49,9 @@ class Base:
         """
         if not os.path.isfile(file_path):
             print(f"File {file_path} doesn't exist, skip")
-        with open(file_path) as landscape_file:
-            lines = landscape_file.readlines()
+            return
+        with open(file_path) as config_file:
+            lines = config_file.readlines()
         new_lines = []
         for line in lines:
             stripped_line = line.strip()
@@ -66,8 +67,8 @@ class Base:
                     break
             if not key_word_found:
                 new_lines.append(line)
-        with open(file_path, "w") as landscape_file:
-            landscape_file.writelines(new_lines)
+        with open(file_path, "w") as config_file:
+            config_file.writelines(new_lines)
 
     def init_module(self, module_uri: str):
         """initialize a module
