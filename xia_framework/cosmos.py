@@ -38,7 +38,10 @@ class Cosmos(Application):
 
         topology_type = (landscape_dict.get("topology", {}) or {}).get("type", None)
         if not topology_type:
-            raise ValueError(f"Please define the topology in config/landscape.yaml")
+            topology_type = input("Please define cosmos topology: \n"
+                                  "gcp: Using GCS Bucket of Google Cloud Platform to save Cosmos state \n"
+                                  "Your choice: \n")
+            # raise ValueError(f"Please define the topology in config/landscape.yaml")
         if topology_type not in self.topology_dict:
             raise ValueError(f"Topology {topology_type} is not among {list(self.topology_dict)}")
 
