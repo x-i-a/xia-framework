@@ -37,13 +37,14 @@ class Cosmos(Application):
             landscape_dict = yaml.safe_load(file) or {}
 
         topology_type = (landscape_dict.get("topology", {}) or {}).get("type", None)
-        if not topology_type:
+        while not topology_type:
             topology_type = input("Please define cosmos topology: \n"
                                   "gcp: Using GCS Bucket of Google Cloud Platform to save Cosmos state \n"
                                   "Your choice: \n")
             # raise ValueError(f"Please define the topology in config/landscape.yaml")
-        if topology_type not in self.topology_dict:
-            raise ValueError(f"Topology {topology_type} is not among {list(self.topology_dict)}")
+            if topology_type not in self.topology_dict:
+                print(f"Topology {topology_type} is not among {list(self.topology_dict)}")
+                topology_type = None
 
         for singularity in self.topology_dict[topology_type]:
             singularity.bigbang(**landscape_dict["settings"])
