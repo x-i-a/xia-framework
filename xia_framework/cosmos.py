@@ -51,7 +51,7 @@ class Cosmos(Application):
             current_settings = singularity.get_inputs(input_dict=current_settings)
 
         for singularity in self.topology_dict[topology_type]:
-            singularity.bigbang(**landscape_dict["settings"])
+            singularity.bigbang(**current_settings)
 
     def terraform_get_state_file_prefix(self, env_name: str = None):
         return f"_/terraform/state"
