@@ -58,7 +58,7 @@ class Cosmos(Application):
         landscape_replace_dict = {
             key + ":": f"  {key}: {value}\n" for key, value in current_settings.items()
         }
-        landscape_replace_dict["type:"] = f"  type: {topology_type}"
+        landscape_replace_dict["type:"] = f"  type: {topology_type}\n"
         self._config_replace(self.landscape_yaml, landscape_replace_dict)
 
         # Step 3: Bigbang
