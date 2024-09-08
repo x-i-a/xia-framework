@@ -38,6 +38,9 @@ class Cosmos(Application):
             }
             tfstate_file_path = os.path.sep.join([self.config_dir, "core", "tfstate.yaml"])
             self._config_replace(tfstate_file_path, tfstate_replace_dict)
+        self.update_requirements()
+        self.install_requirements()
+        self.load_modules()
 
     def bigbang(self):
         """Create the cosmos administration project
