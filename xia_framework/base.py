@@ -251,11 +251,11 @@ class Base:
         tf_destroy_cmd = f'terraform {auto_approve_cmd} -chdir=iac/environments/{env} destroy'
         subprocess.run(tf_destroy_cmd, shell=True)
 
-    def load_modules(self):
+    def load_modules(self) -> dict:
         """Loading all modules
 
         Returns:
-
+            module_dict: Runtime module list
         """
         with open(self.module_yaml, 'r') as file:
             module_dict = yaml.safe_load(file) or {}
@@ -275,6 +275,8 @@ class Base:
                     module_instance.enable(self.module_dir, **event_cfg)
                 elif event == "activate":
                     module_instance.activate(self.module_dir, **event_cfg)
+
+        return module_dict
 
     def enable_environments(self, env: str):
         if os.path.exists(os.path.join(self.env_dir, env)):
