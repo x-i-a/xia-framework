@@ -125,7 +125,7 @@ class Base:
         module_config = module_dict[module_name]
         try:
             module_obj = importlib.import_module(module_config["package"].replace("-", "_"))
-        except ImportError:
+        except (ImportError, ModuleNotFoundError):
             # Installation of package if module is not found
             subprocess.run(['pip', 'install', package_address], check=True)
             module_obj = importlib.import_module(module_config["package"].replace("-", "_"))
