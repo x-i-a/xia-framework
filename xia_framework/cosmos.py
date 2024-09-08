@@ -40,7 +40,7 @@ class Cosmos(Application):
             self._config_replace(tfstate_file_path, tfstate_replace_dict)
         # Prepare common
         repo_dict = {"owner": CliGH.get_gh_owner(), "repo": CliGH.get_gh_repo()}
-        gh_dict = CliGH.get_gh_variable_dict()
+        var_dict = CliGH.get_gh_variable_dict()
 
         # Module level init-config
         self.update_requirements()
@@ -48,7 +48,7 @@ class Cosmos(Application):
         module_dict = self.load_modules()
         for module_name, module_config in module_dict.items():
             module_instance = module_config["_class"]()
-            module_instance.init_config(repo_dict=repo_dict, gh_dict=gh_dict)
+            module_instance.init_config(repo_dict=repo_dict, var_dict=var_dict)
 
     def bigbang(self):
         """Create the cosmos administration project
