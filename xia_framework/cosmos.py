@@ -25,12 +25,6 @@ class Cosmos(Application):
         }
         self._config_replace(self.landscape_yaml, landscape_replace_dict)
 
-        github_replace_dict = {
-            "github_owner:": f"github_owner: {github_owner_name}\n",
-        }
-        github_file_path = os.path.sep.join([self.config_dir, "core", "github.yaml"])
-        self._config_replace(github_file_path, github_replace_dict)
-
         # Prepare common
         repo_dict = {"owner": CliGH.get_gh_owner(), "repo": CliGH.get_gh_repo()}
         var_dict = CliGH.get_gh_variable_dict()
