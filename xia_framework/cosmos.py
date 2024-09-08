@@ -31,13 +31,6 @@ class Cosmos(Application):
         github_file_path = os.path.sep.join([self.config_dir, "core", "github.yaml"])
         self._config_replace(github_file_path, github_replace_dict)
 
-        tf_bucket_name = CliGH.get_gh_action_var('tf_bucket_name')
-        if tf_bucket_name:
-            tfstate_replace_dict = {
-                "tf_bucket:": f"tf_bucket: {tf_bucket_name}\n",
-            }
-            tfstate_file_path = os.path.sep.join([self.config_dir, "core", "tfstate.yaml"])
-            self._config_replace(tfstate_file_path, tfstate_replace_dict)
         # Prepare common
         repo_dict = {"owner": CliGH.get_gh_owner(), "repo": CliGH.get_gh_repo()}
         var_dict = CliGH.get_gh_variable_dict()
