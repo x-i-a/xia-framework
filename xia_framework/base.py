@@ -83,13 +83,14 @@ class Base:
         with open(self.module_yaml, 'r') as module_file:
             module_dict = self.yaml.load(module_file) or {}
         new_module = True if module_name not in module_dict else False
-        if new_module:
-            if package_address:
-                # Installation of package
-                subprocess.run(['pip', 'install', package_address], check=True)
         module_dict[module_name] = {"package": package_name, "events": {"deploy": None}}
         module_config = module_dict[module_name]
-        module_obj = importlib.import_module(module_config["package"].replace("-", "_"))
+        try:
+            module_obj = importlib.import_module(module_config["package"].replace("-", "_"))
+        except (ImportError, ModuleNotFoundError):
+            # Installation of package if module is not found
+            subprocess.run(['pip', 'install', package_address], check=True)
+            module_obj = importlib.import_module(module_config["package"].replace("-", "_"))
         module_class_name = getattr(module_obj, "modules", {}).get(module_name)
         module_class = getattr(module_obj, module_class_name)
         module_instance = module_class()
