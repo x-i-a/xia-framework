@@ -84,6 +84,7 @@ class Cosmos(Application):
         # Step 3: Put Some variable in repository
         for key, value in current_settings.items():
             CliGH.set_gh_action_var(key, value)
+        CliGH.set_gh_action_var("tf_bucket_name", current_settings["bucket_name"])
 
         # Step 4: Bigbang
         for singularity in self.topology_dict[topology_type]:
