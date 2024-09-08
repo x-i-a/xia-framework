@@ -7,7 +7,9 @@ class CliGH:
     def get_gh_variable_dict(cls) -> dict:
         get_var_dict_cmd = f"gh variable list --json=name,value"
         r = subprocess.run(get_var_dict_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
-        return json.loads(r.stdout.strip())
+        var_record = json.loads(r.stdout.strip())
+        var_dict = {line["name"].lower(): line["value"] for line in var_record}
+        return var_dict
 
     @classmethod
     def get_gh_action_var(cls, variable_name: str, env_name: str = None):
