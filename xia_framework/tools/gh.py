@@ -34,3 +34,9 @@ class CliGH:
         r = subprocess.run(get_owner_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
         owner_dict = json.loads(r.stdout)
         return owner_dict["owner"]["login"]
+
+    @classmethod
+    def get_gh_repo(cls):
+        get_repo_cmd = "gh repo view --json name -q .name"
+        r = subprocess.run(get_repo_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
+        return r.stdout.strip()

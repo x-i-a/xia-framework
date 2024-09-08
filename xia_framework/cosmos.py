@@ -39,7 +39,8 @@ class Cosmos(Application):
             tfstate_file_path = os.path.sep.join([self.config_dir, "core", "tfstate.yaml"])
             self._config_replace(tfstate_file_path, tfstate_replace_dict)
         # Prepare common
-        gh_param_dict = CliGH.get_gh_variable_dict()
+        repo_dict = {"owner": CliGH.get_gh_owner(), "repo": CliGH.get_gh_repo()}
+        gh_dict = CliGH.get_gh_variable_dict()
 
         # Module level init-config
         self.update_requirements()
@@ -47,7 +48,7 @@ class Cosmos(Application):
         module_dict = self.load_modules()
         for module_name, module_config in module_dict.items():
             module_instance = module_config["_class"]()
-            module_instance.init_config(gh_dict=gh_param_dict)
+            module_instance.init_config(repo_dict=repo_dict, gh_dict=gh_dict)
 
     def bigbang(self):
         """Create the cosmos administration project
