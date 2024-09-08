@@ -12,6 +12,17 @@ class CliGH:
         return r.stdout.strip() if "was not found" not in r.stderr else None
 
     @classmethod
+    def set_gh_action_var(cls, variable_name: str, variable_value: str, env_name: str = None):
+        get_variable_cmd = f'gh variable set {variable_name} --body "{variable_value}"'
+        if env_name:
+            get_variable_cmd += f" -e {env_name}"
+        r = subprocess.run(get_variable_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
+        if "ERROR" not in r.stderr:
+            print(f"Variable {variable_name} updated successfully")
+        else:
+            raise Exception(r.stderr)
+
+    @classmethod
     def get_gh_owner(cls):
         get_owner_cmd = "gh repo view --json owner"
         r = subprocess.run(get_owner_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)

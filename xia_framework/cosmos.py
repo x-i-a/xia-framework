@@ -24,11 +24,20 @@ class Cosmos(Application):
             "default_owner:": f"  default_owner: {github_owner_name}\n",
         }
         self._config_replace(self.landscape_yaml, landscape_replace_dict)
+
         github_replace_dict = {
             "github_owner:": f"github_owner: {github_owner_name}\n",
         }
         github_file_path = os.path.sep.join([self.config_dir, "core", "github.yaml"])
         self._config_replace(github_file_path, github_replace_dict)
+
+        tf_bucket_name = CliGH.get_gh_action_var('tf_bucket_name')
+        if tf_bucket_name:
+            tfstate_replace_dict = {
+                "tf_bucket:": f"tf_bucket: {tf_bucket_name}\n",
+            }
+            tfstate_file_path = os.path.sep.join([self.config_dir, "core", "tfstate.yaml"])
+            self._config_replace(tfstate_file_path, tfstate_replace_dict)
 
     def bigbang(self):
         """Create the cosmos administration project
@@ -61,7 +70,11 @@ class Cosmos(Application):
         landscape_replace_dict["type:"] = f"  type: {topology_type}\n"
         self._config_replace(self.landscape_yaml, landscape_replace_dict)
 
-        # Step 3: Bigbang
+        # Step 3: Put Some variable in repository
+        for key, value in current_settings.items():
+            CliGH.set_gh_action_var(key, value)
+
+        # Step 4: Bigbang
         for singularity in self.topology_dict[topology_type]:
             singularity.bigbang(**current_settings)
 
