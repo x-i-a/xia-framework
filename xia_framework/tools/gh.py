@@ -4,6 +4,12 @@ import subprocess
 
 class CliGH:
     @classmethod
+    def get_gh_variable_dict(cls) -> dict:
+        get_var_dict_cmd = f"gh variable list --json=name,value"
+        r = subprocess.run(get_var_dict_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
+        return json.loads(r.stdout.strip())
+
+    @classmethod
     def get_gh_action_var(cls, variable_name: str, env_name: str = None):
         get_variable_cmd = f"gh variable get {variable_name}"
         if env_name:
