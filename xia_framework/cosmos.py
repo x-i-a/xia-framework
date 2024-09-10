@@ -21,7 +21,7 @@ class Cosmos(Application):
     def init_config(self):
         github_owner_name = CliGH.get_gh_owner()
         landscape_replace_dict = {
-            "default_owner:": f"  default_owner: {github_owner_name}\n",
+            "repository_owner:": f"  repository_owner: {github_owner_name}\n",
         }
         self._config_replace(self.landscape_yaml, landscape_replace_dict)
 
