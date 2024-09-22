@@ -252,8 +252,10 @@ class Base:
 
     def terraform_unlock(self, env: str, auto_approve: bool = False):
         r = self.terraform_plan(env=env)
-        if "Lock Info:" not in r.stderr:
-            return None  # No lock is needed
+        if "Lock Info:" not in r.stdout:
+            return None  # No lock is detected
+        else:
+            lock_id = ""
         auto_approve_cmd = "-force " if auto_approve else ""
         tf_unlock_cmd = f'terraform {auto_approve_cmd} -chdir=iac/environments/{env} force-unlock'
         return subprocess.run(tf_unlock_cmd, shell=True)
