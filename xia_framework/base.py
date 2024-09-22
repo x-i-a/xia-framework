@@ -253,6 +253,7 @@ class Base:
     def terraform_unlock(self, env: str, auto_approve: bool = False):
         r = self.terraform_plan(env=env)
         if "Lock Info:" not in r.stderr:
+            print(r.stderr, r.stdout)
             return None  # No lock is detected
         else:
             lock_id = ""
