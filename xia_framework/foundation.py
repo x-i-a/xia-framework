@@ -166,6 +166,11 @@ class Foundation(Application):
         self.terraform_init(env=self.BASE_ENV)
         self.terraform_destroy(env=self.BASE_ENV, auto_approve=args.auto_approve)
 
+    def cmd_unlock(self, args):
+        self.prepare(env_name=self.BASE_ENV, skip_terraform=True)
+        self.terraform_init(env=self.BASE_ENV)
+        self.terraform_unlock(env=self.BASE_ENV, auto_approve=args.auto_approve)
+
 
 if __name__ == "__main__":
     Foundation().main()
