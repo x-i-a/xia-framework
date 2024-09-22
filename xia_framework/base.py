@@ -253,6 +253,8 @@ class Base:
     def terraform_get_lock_id(self, env: str):
         tf_plan_cmd = f'terraform -chdir=iac/environments/{env} plan'
         r = subprocess.run(tf_plan_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
+        if "Lock Info:" not in r.stderr:
+            return None
         print(r)
 
     def terraform_unlock(self, env: str, auto_approve: bool = False):
