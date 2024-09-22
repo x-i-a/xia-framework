@@ -144,6 +144,11 @@ class Foundation(Application):
         sub_parser = subparsers.add_parser('destroy', help=f'Prepare {cls.__name__} Deploy time objects')
         sub_parser.add_argument('-y', '--auto-approve', type=str, help='Approve destroy automatically')
 
+    @classmethod
+    def cli_unlock(cls, subparsers):
+        sub_parser = subparsers.add_parser('unlock', help=f'Unlock {cls.__name__} lock objects')
+        sub_parser.add_argument('-y', '--auto-approve', type=str, help='Approve destroy automatically')
+
     def cmd_activate_module(self, args):
         self.activate_module(module_uri=args.module_uri)
 
