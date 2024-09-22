@@ -255,7 +255,7 @@ class Base:
         r = subprocess.run(tf_plan_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
         if "Lock Info:" not in r.stderr:
             return None
-        lock_id = r.stderr.split("Lock Info:\n")[-1].split("ID:")[1].strip()
+        lock_id = r.stderr.split("Lock Info:\n")[-1].split("ID:")[1].split("\n")[0].strip()
         return lock_id
 
     def terraform_unlock(self, env: str, auto_approve: bool = False):
