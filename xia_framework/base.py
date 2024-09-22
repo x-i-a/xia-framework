@@ -234,31 +234,31 @@ class Base:
         tf_init_cmd = (f'terraform -chdir=iac/environments/{env} init '
                        f'-backend-config="bucket={bucket_name}" '
                        f'-backend-config="prefix={self.terraform_get_state_file_prefix(env)}"')
-        return subprocess.run(tf_init_cmd, shell=True)
+        return subprocess.run(tf_init_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
 
     def terraform_apply(self, env: str, auto_approve: bool = False):
         auto_approve_cmd = "--auto-approve " if auto_approve else ""
         tf_apply_cmd = f'terraform {auto_approve_cmd} -chdir=iac/environments/{env} apply'
-        return subprocess.run(tf_apply_cmd, shell=True)
+        return subprocess.run(tf_apply_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
 
     def terraform_plan(self, env: str):
         tf_plan_cmd = f'terraform -chdir=iac/environments/{env} plan'
-        return subprocess.run(tf_plan_cmd, shell=True)
+        return subprocess.run(tf_plan_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
 
     def terraform_destroy(self, env: str, auto_approve: bool = False):
         auto_approve_cmd = "--auto-approve " if auto_approve else ""
         tf_destroy_cmd = f'terraform {auto_approve_cmd} -chdir=iac/environments/{env} destroy'
-        return subprocess.run(tf_destroy_cmd, shell=True)
+        return subprocess.run(tf_destroy_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
 
     def terraform_unlock(self, env: str, auto_approve: bool = False):
         r = self.terraform_plan(env=env)
-        if "Lock Info:" not in r.stdout:
+        if "Lock Info:" not in r.stderr:
             return None  # No lock is detected
         else:
             lock_id = ""
         auto_approve_cmd = "-force " if auto_approve else ""
         tf_unlock_cmd = f'terraform {auto_approve_cmd} -chdir=iac/environments/{env} force-unlock'
-        return subprocess.run(tf_unlock_cmd, shell=True)
+        return subprocess.run(tf_unlock_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
 
     def load_modules(self) -> dict:
         """Loading all modules
