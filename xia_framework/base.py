@@ -251,6 +251,11 @@ class Base:
         tf_destroy_cmd = f'terraform {auto_approve_cmd} -chdir=iac/environments/{env} destroy'
         subprocess.run(tf_destroy_cmd, shell=True)
 
+    def terraform_unlock(self, env: str, auto_approve: bool = False):
+        auto_approve_cmd = "-force " if auto_approve else ""
+        tf_unlock_cmd = f'terraform force-unlock {auto_approve_cmd} -chdir=iac/environments/{env} '
+        subprocess.run(tf_unlock_cmd, shell=True)
+
     def load_modules(self) -> dict:
         """Loading all modules
 

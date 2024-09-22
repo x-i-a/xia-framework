@@ -16,6 +16,7 @@ class Application(Base):
             "plan": {"cli": self.cli_plan, "run": self.cmd_plan},
             "apply": {"cli": self.cli_apply, "run": self.cmd_apply},
             "destroy": {"cli": self.cli_destroy, "run": self.cmd_destroy},
+            "unlock": {"cli": self.cli_unlock, "run": self.cmd_unlock},
         })
 
     def init_config(self):
@@ -80,6 +81,12 @@ class Application(Base):
         sub_parser.add_argument('-e', '--env_name', type=str, help='Environment Name')
         sub_parser.add_argument('-y', '--auto-approve', type=str, help='Approve destroy automatically')
 
+    @classmethod
+    def cli_unlock(cls, subparsers):
+        sub_parser = subparsers.add_parser('unlock', help=f'Unlock {cls.__name__} lock objects')
+        sub_parser.add_argument('-e', '--env_name', type=str, help='Environment Name')
+        sub_parser.add_argument('-y', '--auto-approve', type=str, help='Approve destroy automatically')
+
     def cmd_init_config(self, args):
         return self.init_config()
 
@@ -98,6 +105,11 @@ class Application(Base):
         self.prepare(env_name=args.env_name, skip_terraform=True)
         self.terraform_init(env=args.env_name)
         self.terraform_destroy(env=args.env_name, auto_approve=args.auto_approve)
+
+    def cmd_unlock(self, args):
+        self.prepare(env_name=args.env_name, skip_terraform=True)
+        self.terraform_init(env=args.env_name)
+        self.terraform_unlock(env=args.env_name)
 
 
 if __name__ == "__main__":
