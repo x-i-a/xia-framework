@@ -256,16 +256,15 @@ class Base:
         if "Lock Info:" not in r.stderr:
             return None
         lock_id = r.stderr.split("Lock Info:\n")[-1].split("ID:")[1].strip()
-        print(lock_id)
+        return lock_id
 
     def terraform_unlock(self, env: str, auto_approve: bool = False):
-        if not self.terraform_get_lock_id(env=env):
+        lock_id = self.terraform_get_lock_id(env=env)
+        if not lock_id:
             return None  # No lock is detected
-        else:
-            lock_id = ""
         auto_approve_cmd = "-force " if auto_approve else ""
-        tf_unlock_cmd = f'terraform {auto_approve_cmd} -chdir=iac/environments/{env} force-unlock'
-        return subprocess.run(tf_unlock_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
+        tf_unlock_cmd = f'terraform {auto_approve_cmd} -chdir=iac/environments/{env} force-unlock {lock_id}'
+        return subprocess.run(tf_unlock_cmd, shell=True)
 
     def load_modules(self) -> dict:
         """Loading all modules
