@@ -253,7 +253,7 @@ class Base:
 
     def terraform_unlock(self, env: str, auto_approve: bool = False):
         auto_approve_cmd = "-force " if auto_approve else ""
-        tf_unlock_cmd = f'terraform force-unlock {auto_approve_cmd} -chdir=iac/environments/{env} '
+        tf_unlock_cmd = f'terraform {auto_approve_cmd} -chdir=iac/environments/{env} force-unlock'
         subprocess.run(tf_unlock_cmd, shell=True)
 
     def load_modules(self) -> dict:
