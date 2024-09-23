@@ -16,10 +16,12 @@ class Foundation(Application):
         })
 
     def init_config(self):
+        github_owner_name = CliGH.get_gh_owner()
         landscape_replace_dict = {
             "cosmos_name:": f"  cosmos_name: {CliGH.get_gh_action_var('cosmos_name')}\n",
             "realm_name:": f"  realm_name: {CliGH.get_gh_action_var('realm_name')}\n",
             "foundation_name:": f"  foundation_name: {CliGH.get_gh_action_var('foundation_name')}\n",
+            "default_repository_owner:": f"  default_repository_owner: {github_owner_name}\n",
         }
         self._config_replace(self.landscape_yaml, landscape_replace_dict)
         tf_bucket_name = CliGH.get_gh_action_var('tf_bucket_name')
