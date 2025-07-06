@@ -18,7 +18,7 @@ def main():
     application = Application()
     if args.command == 'init-module':
         application.prepare()
-        application.create(args.module_name)
+        application.init_module(args.module_name)
     else:
         # If no command is provided, show help
         parser.print_help()
