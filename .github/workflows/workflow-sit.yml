@@ -21,6 +21,9 @@ jobs:
       name: Publish PYPI
       uses: ./.github/actions/module-pypi/publish-pypi
 
+    - name: Publish release distributions to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
+
     - id: auth-gcp-oidc
       name: Authenticate to Google Cloud
       uses: google-github-actions/auth@v2
